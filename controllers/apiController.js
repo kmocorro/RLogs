@@ -14,8 +14,24 @@ module.exports = function(app){
         
         if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments){
             
-            let startDate = moment(post_rlogs.date_range.split('-')[0]).format();
-            let endDate = moment(post_rlogs.date_range.split('-')[1]).format();
+            let processArr = [];
+
+            if((post_rlogs.process_name).constructor === Array){
+                for(let i=0; i<post_rlogs.process_name.length; i++){
+                    processArr.push({
+                        process: post_rlogs.process_name[i]
+                    });
+                }
+            } else {
+                processArr = {
+                    process: post_rlogs.process_name
+                };
+            }
+            
+            console.log(processArr);
+            
+            let startDate = moment( new Date(post_rlogs.date_range.split('-')[0])).format();
+            let endDate = moment( new Date(post_rlogs.date_range.split('-')[1])).format();
 
             mysqlCloud.connectAuth.getConnection(function(err, connection){
                 if(err){ return res.send({err: 'database connection error @ api rlogs'})}
@@ -25,7 +41,7 @@ module.exports = function(app){
                         //console.log(connection);
                         connection.query({
                             sql: 'INSERT INTO tbl_rlogs SET date_range=?, startDate=?, endDate=?, process_name=?, comments=?',
-                            values: [post_rlogs.date_range, startDate, endDate, post_rlogs.process_name,  post_rlogs.comments]
+                            values: [post_rlogs.date_range, startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments]
                         }, function(err, results, fields){
                             if(err){ return res.send({err: 'database insert error @ api rlogs'})}
                             res.send({success: 'Form has been saved!'});
@@ -117,11 +133,13 @@ module.exports = function(app){
                                 date_range: results[i].date_range,
                                 startDate: moment(results[i].startDate).format('lll'),
                                 endDate: moment(results[i].endDate).format('lll'),
-                                process_name: results[i].process_name,
+                                process_name: JSON.parse(results[i].process_name),
                                 comments: results[i].comments
                             });
                             
                         }
+                        //console.log(JSON.parse(rlogs_list[0].process_name));
+
                         resolve(rlogs_list);
                     });
                     connection.release();

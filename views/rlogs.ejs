@@ -221,8 +221,7 @@
                             </div>
                             <div class="process_name_div" style="padding-bottom:10px;">
                                 <h5>Process:</h5> 
-                                <select type="text" class="form-control select2" id="process_name" name="process_name">
-                                  <option selected="true" disabled="disabled">Select a process</option>
+                                <select type="text" class="form-control select2" multiple="multiple" id="process_name" name="process_name" data-placeholder="Tag a Process">
                                   <% for(let i=0; i<process.length;i++) { %>
                                     <option value="<%= process[i] %>">
                                       <%= process[i] %>
@@ -290,9 +289,18 @@
                         <tr>
                         <td><%= rlogs_list[i].startDate %></td>
                         <td><%= rlogs_list[i].endDate %></td>
-                        <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
+                          
+                          <td><% if(rlogs_list[i].process_name.length > 0){ %>
+                              <% for(let j=0; j < rlogs_list[i].process_name.length; j++) { %>
+                              <span class="label label-primary"><%= rlogs_list[i].process_name[j].process %></span>
+                              <% } %>
+                              <% } else {%>
+                              <span class="label label-primary"><%= rlogs_list[i].process_name.process %></span>
+                              <% } %>
+                          </td>
+                         
                         <td><%= rlogs_list[i].comments %></td>
-                        <td><button class="btn btn-danger" data-toggle="modal" data-target="#modal-danger">Delete</button></td>
+                        <td><button class="btn btn-danger" data-toggle="modal" data-target="#modal-danger<%= i %>">Delete</button></td>
                         
                         </tr>
                         <% } %>
@@ -301,8 +309,8 @@
 
 
                 </div>
-                <% for(let i=0; i < rlogs_list.length; i++) { %>
-                <div class="modal modal-default fade" id="modal-danger">
+                <% for(let k=0; k < rlogs_list.length; k++) { %>
+                <div class="modal modal-default fade" id="modal-danger<%= k %>">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -322,16 +330,25 @@
                                   <th>Comment</th>
                               </tr>
                               <tr class="danger">
-                                <td><%= rlogs_list[i].startDate %></td>
-                                <td><%= rlogs_list[i].endDate %></td>
-                                <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
-                                <td><%= rlogs_list[i].comments %></td>
+                                <td><%= rlogs_list[k].startDate %></td>
+                                <td><%= rlogs_list[k].endDate %></td>
+                                
+                                <td><% if(rlogs_list[k].process_name.length > 0){ %>
+                                  <% for(let j=0; j < rlogs_list[k].process_name.length; j++) { %>
+                                  <span class="label label-primary"><%= rlogs_list[k].process_name[j].process %></span>
+                                  <% } %>
+                                  <% } else {%>
+                                  <span class="label label-primary"><%= rlogs_list[k].process_name.process %></span>
+                                  <% } %>
+                                </td>
+
+                                <td><%= rlogs_list[k].comments %></td>
                               </tr>
                             </thead>
                           </table>
                         </div>
                         <div class="modal-footer">
-                          <a href="#delete" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[i].id %>'">Delete</a>
+                          <a href="#delete" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[k].id %>'">Delete</a>
                           <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
                         </div>
                       </div>
