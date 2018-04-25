@@ -87,8 +87,8 @@ module.exports = function(app){
                         for(let i=0; i<results.length;i++){
                             rlogs_list.push({
                                 date_range: results[i].date_range,
-                                startDate: results[i].startDate,
-                                endDate: results[i].endDate,
+                                startDate: moment(results[i].startDate).format('llll'),
+                                endDate: moment(results[i].endDate).format('llll'),
                                 process_name: results[i].process_name,
                                 comments: results[i].comments
                             });

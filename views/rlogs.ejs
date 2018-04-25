@@ -248,7 +248,7 @@
 
         <!-- Log Box-->
         <div class="col-md-8">
-            <div class="box box-danger" style="height: 100%;">
+            <div class="box box-default" style="height: 100%;">
                 <div class="box-header with-border">
                     <h3 class="box-title" style="padding-bottom:12px;">Saved Logs</h3>
         
@@ -266,7 +266,6 @@
                       
                       <thead>
                         <tr>
-                        <th>Date Range</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Process</th>
@@ -276,7 +275,6 @@
                       </thead>
                         <% for (let i=0; i < rlogs_list.length; i++) {  %>
                         <tr>
-                        <td><%= rlogs_list[i].date_range %></td>
                         <td><%= rlogs_list[i].startDate %></td>
                         <td><%= rlogs_list[i].endDate %></td>
                         <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
@@ -540,7 +538,7 @@
       'searching'   : true,
       'ordering'    : true,
       'info'        : true,
-      'autoWidth'   : false,
+      'autoWidth'   : true,
       'responseive': true,
     });
 
