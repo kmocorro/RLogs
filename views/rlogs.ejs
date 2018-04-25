@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="../dist/ionicons/css/ionicons.min.css">
     <!-- Date range picker-->
     <link rel="stylesheet" href="../style/daterangepicker.css">
-
-
     
     <!-- Select 2-->
     <link rel="stylesheet" href="../style/select2.min.css">
@@ -40,6 +38,7 @@
     
     <script type="text/javascript" src="../src/popper/popper.min.js"></script>
     <script type="text/javascript" src="../src/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/validation.min.js"></script>
     <script type="text/javascript" src="../js/verifyRLogs.js"></script>
     <script type="text/javascript" src="../js/moment.js"></script>
@@ -256,7 +255,7 @@
                 <!-- /.box-footer-->
             </div>
         </div>
-
+          
         <!-- Log Box-->
         <div class="col-md-8">
           
@@ -293,18 +292,55 @@
                         <td><%= rlogs_list[i].endDate %></td>
                         <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
                         <td><%= rlogs_list[i].comments %></td>
-                        <td><a href="#delete" class="btn btn-danger" role="button" onClick="window.location ='/delete/<%= rlogs_list[i].id %>';">Delete</a></td>
+                        <td><button class="btn btn-danger" data-toggle="modal" data-target="#modal-danger">Delete</button></td>
                         
                         </tr>
                         <% } %>
                     </table>
                 <ul id="logs"></ul>
 
-                
-
 
                 </div>
-                
+                <% for(let i=0; i < rlogs_list.length; i++) { %>
+                <div class="modal modal-default fade" id="modal-danger">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title">Think twice! This action cannot be undone.</h4>
+                        </div>
+                        <div class="modal-body">
+                          <p>Are you sure you want to <span class="label label-danger">DELETE</span> this activity?</p>
+                          <br/>
+                          <table id="modalsavedlogs" class="table table-bordered">
+                            <thead>
+                              <tr class="danger">
+                                  <th>Start Date</th>
+                                  <th>End Date</th>
+                                  <th>Process</th>
+                                  <th>Comment</th>
+                              </tr>
+                              <tr class="danger">
+                                <td><%= rlogs_list[i].startDate %></td>
+                                <td><%= rlogs_list[i].endDate %></td>
+                                <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
+                                <td><%= rlogs_list[i].comments %></td>
+                              </tr>
+                            </thead>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <a href="#delete" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[i].id %>'">Delete</a>
+                          <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                <% } %>
+                  <!-- /.modal -->
                 
                 <!-- /.box-footer-->
             </div>
@@ -324,6 +360,7 @@
 
   </div>
   <!-- /.content-wrapper -->
+
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs" >
@@ -583,5 +620,6 @@
     });
   });
 </script>
+
 </body>
 </html>
