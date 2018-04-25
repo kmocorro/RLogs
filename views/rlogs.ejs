@@ -540,7 +540,13 @@
       'responseive': true,
     });
 
-    $('#date_range').daterangepicker();
+    $('#date_range').daterangepicker({
+      timePicker: true, 
+      timePickerIncrement: 30, 
+      locale: {
+        format: 'MM/DD/YYYY h:mm A'
+      } 
+    });
   });
 </script>
 </body>
