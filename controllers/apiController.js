@@ -46,6 +46,33 @@ module.exports = function(app){
         
     });
 
+    app.get('/delete/:id', function(req, res){
+        let post_id = req.params;
+        
+        if(post_id){
+            function deleteInput(){
+                return new Promise(function(resolve, reject){
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        if(err){ return res.send({err: 'error connecting to database in deleteInput'})}
+                        connection.query({
+                            sql: 'DELETE from tbl_rlogs WHERE id =?',
+                            values: [post_id.id]
+                        }, function(err, results, fields){
+                            if(err){ return res.send({err: 'error while deleting in deleteInput'})}
+                            res.redirect('/rlogs');
+                        });
+                        connection.release();
+                    });
+                });
+            }
+
+            deleteInput();
+        } else {
+            res.send({err: 'Unable to delete'});
+        }
+        
+    });
+
     app.get('/', function(req, res){
         
         res.redirect('/rlogs');
@@ -86,9 +113,10 @@ module.exports = function(app){
 
                         for(let i=0; i<results.length;i++){
                             rlogs_list.push({
+                                id: results[i].id,
                                 date_range: results[i].date_range,
-                                startDate: moment(results[i].startDate).format('llll'),
-                                endDate: moment(results[i].endDate).format('llll'),
+                                startDate: moment(results[i].startDate).format('lll'),
+                                endDate: moment(results[i].endDate).format('lll'),
                                 process_name: results[i].process_name,
                                 comments: results[i].comments
                             });

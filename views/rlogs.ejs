@@ -6,27 +6,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    
+
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="../dist/bootstrap/css/bootstrap.min.css">
     <!-- fontawesome -->
     <link rel="stylesheet" href="../dist/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="../dist/ionicons/css/ionicons.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="../dist/datatables/css/dataTables.bootstrap.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="../dist/css/AdminLTE.min.css">
-    <!-- Theme skin -->
-    <link rel="stylesheet" href="../dist/css/skins/_all-skins.min.css">
     <!-- Date range picker-->
     <link rel="stylesheet" href="../style/daterangepicker.css">
+
+
+    
+    <!-- Select 2-->
+    <link rel="stylesheet" href="../style/select2.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../dist/css/AdminLTE.min.css">
+    
+    
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="../dist/datatables/css/dataTables.bootstrap.min.css">
+    <!-- Theme skin -->
+    <link rel="stylesheet" href="../dist/css/skins/_all-skins.min.css">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,300italic,400italic,600italic">
 
     <!-- Uploader form-->
 
-    <link rel="stylesheet" type="text/css" href="../style/bootstrap-datetimepicker.css">
-    <link rel="stylesheet" type="text/css" href="../src/bootstrap/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="../style/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" type="text/css" href="../src/bootstrap/css/bootstrap.min.css"> -->
     
     <script type="text/javascript" src="../src/popper/popper.min.js"></script>
     <script type="text/javascript" src="../src/jquery/jquery.min.js"></script>
@@ -46,6 +56,7 @@
 <body class="sidebar-mini skin-black sidebar-collapse">
 
 <div class="wrapper">
+  
  <header class="main-header">
   <!-- Logo -->
   <a href="#" class="logo" style="text-decoration: none;">
@@ -211,7 +222,7 @@
                             </div>
                             <div class="process_name_div" style="padding-bottom:10px;">
                                 <h5>Process:</h5> 
-                                <select type="text" class="form-control" id="process_name" name="process_name">
+                                <select type="text" class="form-control select2" id="process_name" name="process_name">
                                   <option selected="true" disabled="disabled">Select a process</option>
                                   <% for(let i=0; i<process.length;i++) { %>
                                     <option value="<%= process[i] %>">
@@ -248,20 +259,22 @@
 
         <!-- Log Box-->
         <div class="col-md-8">
+          
             <div class="box box-default" style="height: 100%;">
                 <div class="box-header with-border">
-                    <h3 class="box-title" style="padding-bottom:12px;">Saved Logs</h3>
+                    <h3 class="box-title" style="padding-bottom:12px;">Activity Logs</h3>
         
                     <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fa fa-minus"></i></button>
                     <!--<button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fa fa-times"></i></button>
-                    </div>-->
+                        <i class="fa fa-times"></i></button>-->
+                    </div>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body table-responsive no-padding">
+                
+                <div class="box-body table-responsive">
                     <table id="savedlogs" class="table table-hover">
                       
                       <thead>
@@ -270,6 +283,7 @@
                         <th>End Date</th>
                         <th>Process</th>
                         <th>Comment</th>
+                        <th>Option</th>
                         </tr>
                         
                       </thead>
@@ -278,23 +292,32 @@
                         <td><%= rlogs_list[i].startDate %></td>
                         <td><%= rlogs_list[i].endDate %></td>
                         <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
-                        <td><pre><%= rlogs_list[i].comments %></pre></td>
+                        <td><%= rlogs_list[i].comments %></td>
+                        <td><a href="#delete" class="btn btn-danger" role="button" onClick="window.location ='/delete/<%= rlogs_list[i].id %>';">Delete</a></td>
+                        
                         </tr>
                         <% } %>
                     </table>
                 <ul id="logs"></ul>
+
+                
+
+
                 </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
-                    <small style="float:right"><i></i></small>
-                </div>
+                
+                
                 <!-- /.box-footer-->
             </div>
-        </div>
+            
         
 
+        </div>
+        
       </div>
         <!-- /.box -->
+
+        
+        
   
     </section>
     <!-- /.content -->
@@ -522,24 +545,33 @@
 
 <script src="../js/daterangepicker.js"></script>
 
+<script src="../js/select2.full.min.js"></script>
 
 <script src="../dist/js/fastclick.js"></script>
 <script src="../dist/js/adminlte.min.js"></script>
 <script src='../dist/js/socket.io.js'></script>
 
+
 <script>
   $(function () {
     //$('#example1').DataTable();
+    
+    $('.select2').select2();
+
     $('#savedlogs').DataTable({
       //'order'       : [[0, 'desc']],
       'order'       : false,
       'paging'      : true,
       'lengthChange': true,
       'searching'   : true,
-      'ordering'    : true,
+      'ordering'    : false,
       'info'        : true,
-      'autoWidth'   : true,
+      'autoWidth'   : false,
       'responseive': true,
+      "columnDefs": [
+    { "width": "12%", "targets": [0, 1, 2] },
+    { "width": "3%", "targets": -1 }
+  ]
     });
 
     $('#date_range').daterangepicker({

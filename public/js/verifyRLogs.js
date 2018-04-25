@@ -40,7 +40,7 @@ $('document').ready(function(){
                         $("#error").html('<div class="alert alert-success">'+response.success+' </div>');
                     });
                     $("#btn-rlogs").html('Please wait...');
-                    setTimeout(' window.location.reload(true); ',1000);
+                    setTimeout(' window.location.reload(true); ',500);
 
                 } else {
                     $("#error").fadeIn(1000, function(){
