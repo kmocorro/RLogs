@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>  
-    <title>Fab4 Meta | Line </title>
+    <title>Fab4 Meta - Activity Logs </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
@@ -165,8 +165,8 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Activity
-        <small>logger</small>
+        Fab4 Activity
+        <small>loggr</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -274,9 +274,9 @@
                       </thead>
                         <% for (let i=0; i < rlogs_list.length; i++) {  %>
                         <tr>
-                        <td><%= rlogs_list[i].date_range %></td>
+                        <td><span class="label label-success"><%= rlogs_list[i].date_range %></span></td>
                         <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
-                        <td><span class="label label-success"><%= rlogs_list[i].comments %></span></td>
+                        <td><pre><%= rlogs_list[i].comments %></pre></td>
                         </tr>
                         <% } %>
                     </table>
@@ -536,7 +536,8 @@
       'searching'   : true,
       'ordering'    : true,
       'info'        : true,
-      'autoWidth'   : false
+      'autoWidth'   : false,
+      'responseive': true,
     });
 
     $('#date_range').daterangepicker();
