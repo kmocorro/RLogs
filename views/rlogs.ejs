@@ -266,7 +266,9 @@
                       
                       <thead>
                         <tr>
-                        <th>Date</th>
+                        <th>Date Range</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Process</th>
                         <th>Comment</th>
                         </tr>
@@ -274,7 +276,9 @@
                       </thead>
                         <% for (let i=0; i < rlogs_list.length; i++) {  %>
                         <tr>
-                        <td><span class="label label-success"><%= rlogs_list[i].date_range %></span></td>
+                        <td><%= rlogs_list[i].date_range %></td>
+                        <td><%= rlogs_list[i].startDate %></td>
+                        <td><%= rlogs_list[i].endDate %></td>
                         <td><span class="label label-primary"><%= rlogs_list[i].process_name %></span></td>
                         <td><pre><%= rlogs_list[i].comments %></pre></td>
                         </tr>
@@ -532,7 +536,7 @@
       //'order'       : [[0, 'desc']],
       'order'       : false,
       'paging'      : true,
-      'lengthChange': false,
+      'lengthChange': true,
       'searching'   : true,
       'ordering'    : true,
       'info'        : true,

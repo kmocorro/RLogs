@@ -13,6 +13,10 @@ module.exports = function(app){
         //console.log(post_rlogs);
         
         if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments){
+            
+            let startDate = moment(post_rlogs.date_range.split('-')[0]).format();
+            let endDate = moment(post_rlogs.date_range.split('-')[1]).format();
+
             mysqlCloud.connectAuth.getConnection(function(err, connection){
                 if(err){ return res.send({err: 'database connection error @ api rlogs'})}
     
@@ -20,8 +24,8 @@ module.exports = function(app){
                     return new Promise(function(resolve, reject){
                         //console.log(connection);
                         connection.query({
-                            sql: 'INSERT INTO tbl_rlogs SET date_range=?, process_name=?, comments=?',
-                            values: [post_rlogs.date_range, post_rlogs.process_name,  post_rlogs.comments]
+                            sql: 'INSERT INTO tbl_rlogs SET date_range=?, startDate=?, endDate=?, process_name=?, comments=?',
+                            values: [post_rlogs.date_range, startDate, endDate, post_rlogs.process_name,  post_rlogs.comments]
                         }, function(err, results, fields){
                             if(err){ return res.send({err: 'database insert error @ api rlogs'})}
                             res.send({success: 'Form has been saved!'});
@@ -83,6 +87,8 @@ module.exports = function(app){
                         for(let i=0; i<results.length;i++){
                             rlogs_list.push({
                                 date_range: results[i].date_range,
+                                startDate: results[i].startDate,
+                                endDate: results[i].endDate,
                                 process_name: results[i].process_name,
                                 comments: results[i].comments
                             });
