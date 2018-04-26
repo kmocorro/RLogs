@@ -14,7 +14,7 @@ $('document').ready(function(){
         messages:{
             date_range: 'Enter date range.',
             process_name: 'Enter process name affected.',
-            comments: 'Enter your comment.'
+            comments: 'Enter your activity.'
         },
         submitHandler: submitForm
     });
@@ -30,7 +30,7 @@ $('document').ready(function(){
             beforeSend: function(){
                 $('#error').fadeOut();
                 $('#btn-rlogs').prop('disabled', true);
-                $('#btn-rlogs').html('sending ...');
+                $('#btn-rlogs').html('Post Your Activities');
             },
             success: function(response){
                 if(response.success){
@@ -39,15 +39,15 @@ $('document').ready(function(){
                     $("#error").fadeIn(0, function(){						
                         $("#error").html('<div class="alert alert-success">'+response.success+' </div>');
                     });
-                    $("#btn-rlogs").html('Please wait...');
+                    $("#btn-rlogs").html('Post Your Activities');
                     setTimeout(' window.location.reload(true); ',500);
 
                 } else {
                     $("#error").fadeIn(1000, function(){
 
                         $("#error").html('<div class="alert alert-danger">'+response.err+' </div>'); 
-                        $("#btn-barcode").prop("disabled",false);
-                        $("#btn-barcode").html('Try again');
+                        $("#btn-rlogs").prop("disabled",false);
+                        $("#btn-rlogs").html('Try again');
 
                     });
                    
@@ -56,4 +56,5 @@ $('document').ready(function(){
         });
     
     }
+
 });

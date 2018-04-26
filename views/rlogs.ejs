@@ -192,7 +192,7 @@
         <div class="col-md-4">
             <div class="box box-primary" style="height: 100%;">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Fill up the form</h3>
+                    <h3 class="box-title">Post your activities</h3>
         
                     <div class="box-tools pull-right">
                     <!--<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
@@ -205,11 +205,11 @@
                 <div class="box-body">
                     <form action="" method="post" id="rlogs_form" name="rlogs_form" class="form-upload">
 
-                        <div class="header_div" style="padding-bottom:10px;">
+                        <div class="header_div" style="padding-bottom:5px;">
                             
                             <!-- Date range -->
                             <div class="form-group">
-                              <label>Date range:</label>
+                              <h5>Datetime</h5>
 
                               <div class="input-group">
                                 <div class="input-group-addon">
@@ -219,19 +219,21 @@
                               </div>
                               <!-- /.input group -->
                             </div>
-                            <div class="process_name_div" style="padding-bottom:10px;">
-                                <h5>Process:</h5> 
-                                <select type="text" class="form-control select2" multiple="multiple" id="process_name" name="process_name" data-placeholder="Tag a Process">
+                            
+                            <div class="comments_name_div" style="padding-bottom:5px;">
+                                <h5>Activity</h5> 
+                                <textarea rows="5" class="form-control" id="comments" name="comments"  placeholder="What's your activity? Be specific."></textarea>
+                            </div>
+
+                            <div class="process_name_div" style="padding-bottom:10px; width:100%;" >
+                                <h5>Tags</h5> 
+                                <select type="text" class="form-control select2" multiple="multiple" id="process_name" name="process_name" data-placeholder="  at least one or multiple process" style="width:100%">
                                   <% for(let i=0; i<process.length;i++) { %>
                                     <option value="<%= process[i] %>">
                                       <%= process[i] %>
                                     </option>
                                   <% } %>
                                 </select>
-                            </div>
-                            <div class="comments_name_div" style="padding-bottom:10px;">
-                                <h5>Comments:</h5> 
-                                <textarea rows="5" class="form-control" id="comments" name="comments"  placeholder="Add a comment"></textarea>
                             </div>
                             
                             <div id="error">
@@ -241,17 +243,17 @@
                             
                             
                         </div>
-                        <hr>
-                        <div class="submit_div" style="padding-bottom: 20px;">
-                            <button id="btn-rlogs" class="btn btn-lg btn-warning btn-block" name="Submit" type="Submit" value="Save">Save</button>
+                        <div class="submit_div" style="padding-top: 5px;">
+                            <button id="btn-rlogs" class="btn btn-md btn-warning pull-left" name="Submit" type="Submit" value="Save">Post Your Activities</button>
                         </div>
+                        
                     </form>
                 </div>
-                <!-- /.box-body -->
+                <!-- /.box-body 
                 <div class="box-footer">
                     <small style="float:right"><i>All fields are required.</i></small>
                 </div>
-                <!-- /.box-footer-->
+               /.box-footer-->
             </div>
         </div>
           
@@ -280,8 +282,8 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Process</th>
-                        <th>Comment</th>
-                        <th>Option</th>
+                        <th>Activity</th>
+                        <th> </th>
                         </tr>
                         
                       </thead>
@@ -300,7 +302,10 @@
                           </td>
                          
                         <td><%= rlogs_list[i].comments %></td>
-                        <td><button class="btn btn-danger" data-toggle="modal" data-target="#modal-danger<%= i %>">Delete</button></td>
+                        <td>
+                          <a href="#edit" data-toggle="modal" data-target="#modal-warning<%= i %>">edit</a>
+                          <a href="#delete" data-toggle="modal" data-target="#modal-danger<%= i %>">delete</a>
+                        </td>
                         
                         </tr>
                         <% } %>
@@ -316,7 +321,7 @@
                         <div class="modal-header">
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                          <h4 class="modal-title">Think twice! This action cannot be undone.</h4>
+                          <h4 class="modal-title">Think twice! You cannot undo this action.</h4>
                         </div>
                         <div class="modal-body">
                           <p>Are you sure you want to <span class="label label-danger">DELETE</span> this activity?</p>
@@ -348,14 +353,90 @@
                           </table>
                         </div>
                         <div class="modal-footer">
-                          <a href="#delete" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[k].id %>'">Delete</a>
-                          <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                          <a href="#d" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[k].id %>'">Delete</a>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                       </div>
                       <!-- /.modal-content -->
                     </div>
                     <!-- /.modal-dialog -->
                   </div>
+
+                  <div class="modal modal-default fade" id="modal-warning<%= k %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Edit activity</h4>
+                          </div>
+                          <div class="modal-body">
+                              <div class="box-body">
+                                  <form action="" method="POST" id="rlogs_form_update<%= k %>" name="rlogs_form_update" class="form-upload">
+              
+                                      <div class="header_div" style="padding-bottom:5px;">
+                                          
+                                          <!-- Date range -->
+                                          <div class="form-group">
+                                            <h5>Datetime</h5>
+              
+                                            <div class="input-group">
+                                              <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                              </div>
+                                              <input type="text" class="form-control pull-right" id="date_range_update<%= k %>" name="date_range_update">
+                                            </div>
+                                            <!-- /.input group -->
+                                          </div>
+                                          
+                                          <div class="comments_name_div" style="padding-bottom:5px;">
+                                              <h5>Activity</h5> 
+                                              <textarea rows="5" class="form-control" id="comments_update" name="comments_update"  placeholder="What's your activity? Be specific."></textarea>
+                                          </div>
+              
+                                          <div class="process_name_div" style="padding-bottom:10px; width:100%;" >
+                                              <h5>Tags</h5> 
+
+                                              <select type="text" class="form-control select2" multiple="multiple" id="process_name_update" name="process_name_update" data-placeholder="" style="width:100%">
+                                                <% for(let i=0; i<process.length;i++) { %>
+                                                  <option value="<%= process[i] %>">
+                                                    <%= process[i] %>
+                                                  </option>
+                                                <% } %>
+                                              </select>
+                                          </div>
+
+                                          <div>
+                                            <input type="hidden" class="activity_id" id="activity_id" name="activity_id" value="<%= rlogs_list[k].id %>" />
+                                          </div>
+                                          
+                                          <div id="error_update<%= k %>">
+                                              <!-- error / success will be shown here -->
+                                          </div>
+              
+                                          
+                                          
+                                      </div>
+                                      <div class="submit_div" style="padding-top: 5px;">
+                                          <button id="btn-rlogs-update<%= k %>" class="btn btn-md btn-primary pull-right" name="Submit" type="Submit" value="Save" >Update Activity</button>
+                                          <!--<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>-->
+                                      </div>
+                                      
+                                  </form>
+                              </div>
+                            
+                          </div> <!--  
+                          <div class="modal-footer">
+                                                     <a href="#delete" class="btn btn-primary" role="button" onClick="window.location='http://10.3.170.77:7070/update/<%= rlogs_list[k].id %>'">Update</a>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            
+
+                          </div>-->
+                        </div>
+                        <!-- /.modal-content -->
+                      </div>
+                      <!-- /.modal-dialog -->
+                    </div>
                 <% } %>
                   <!-- /.modal -->
                 
@@ -616,10 +697,10 @@
       //'order'       : [[0, 'desc']],
       'order'       : false,
       'paging'      : true,
-      'lengthChange': true,
-      'searching'   : true,
+      'lengthChange': false,
+      'searching'   : false,
       'ordering'    : false,
-      'info'        : true,
+      'info'        : false,
       'autoWidth'   : false,
       'responseive': true,
       "columnDefs": [
@@ -635,8 +716,89 @@
         format: 'MM/DD/YYYY h:mm A'
       } 
     });
+
+    for(let i=0; i< '<%= rlogs_list.length %>';i++){
+      $('#date_range_update' + i).daterangepicker({
+      timePicker: true, 
+      timePickerIncrement: 30, 
+      locale: {
+        format: 'MM/DD/YYYY h:mm A'
+      } 
+      });
+    }
+    
   });
 </script>
+<script>
+$('document').ready(function(){
 
+    for(let i=0; i < '<%= rlogs_list.length %>'; i++){
+      
+      $('#rlogs_form_update' + i).validate({
+            rules:{
+                date_range_update: {
+                    required: true
+                },
+                process_name_update: {
+                    required: true
+                },
+                comments_update:{
+                    required: true
+                },
+                activity_id:{
+                    number: true,
+                    required: true
+                }
+            },
+            messages:{
+                date_range_update: 'Enter date range.',
+                process_name_update: 'Enter process name affected.',
+                comments_update: 'Enter your activity.',
+            },
+            submitHandler: submitForm_update
+        });
+
+      function submitForm_update(){
+
+            var data = $('#rlogs_form_update' + i).serialize();
+    
+            $.ajax({
+                type: 'POST',
+                url: '/api/update',
+                data: data,
+                beforeSend: function(){
+                    $('#error_update' + i).fadeOut();
+                    $('#btn-rlogs-update'  + i).prop('disabled', true);
+                    $('btn-rlogs-update' + i).html('Post Your Activities');
+                },
+                success: function(response){
+                    if(response.success){
+                        $("#btn-rlogs-update" + i).html('Saving...');
+                        $("#btn-rlogs-update" + i).prop("disabled",true);
+                        $("#error_update"  + i).fadeIn(0, function(){						
+                            $("#error_update"  + i).html('<div class="alert alert-success">'+response.success+' </div>');
+                        });
+                        $("#btn-rlogs-update").html('Post Your Activities');
+                        setTimeout(' window.location.reload(true); ',500);
+    
+                    } else {
+                        $("#error_update"  + i).fadeIn(1000, function(){
+    
+                            $("#error_update"  + i).html('<div class="alert alert-danger">'+response.err+' </div>'); 
+                            $("#btn-rlogs-update" + i).prop("disabled",false);
+                            $("#btn-rlogs-update" + i).html('Try again');
+    
+                        });
+                       
+                    }
+                }
+            });
+        
+        }
+    }
+        
+    
+});
+</script>
 </body>
 </html>

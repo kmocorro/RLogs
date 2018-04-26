@@ -10,7 +10,7 @@ module.exports = function(app){
 
     app.post('/api/runlogs', function(req, res){
         let post_rlogs = req.body;
-        //console.log(post_rlogs);
+      //  console.log(post_rlogs);
         
         if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments){
             
@@ -28,7 +28,7 @@ module.exports = function(app){
                 };
             }
             
-            console.log(processArr);
+            //console.log(processArr);
             
             let startDate = moment( new Date(post_rlogs.date_range.split('-')[0])).format();
             let endDate = moment( new Date(post_rlogs.date_range.split('-')[1])).format();
@@ -40,8 +40,8 @@ module.exports = function(app){
                     return new Promise(function(resolve, reject){
                         //console.log(connection);
                         connection.query({
-                            sql: 'INSERT INTO tbl_rlogs SET date_range=?, startDate=?, endDate=?, process_name=?, comments=?',
-                            values: [post_rlogs.date_range, startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments]
+                            sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?',
+                            values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments]
                         }, function(err, results, fields){
                             if(err){ return res.send({err: 'database insert error @ api rlogs'})}
                             res.send({success: 'Form has been saved!'});
@@ -61,6 +61,58 @@ module.exports = function(app){
         
         
     });
+
+    app.post('/api/update', function(req, res){
+        let post_update = req.body; 
+
+      //  console.log(post_update);
+        
+        
+        if(post_update.date_range_update && post_update.process_name_update && post_update.comments_update && post_update.activity_id ){
+
+            let processArr = [];
+
+            if((post_update.process_name_update).constructor === Array){
+                for(let i=0; i<post_update.process_name_update.length; i++){
+                    processArr.push({
+                        process: post_update.process_name_update[i]
+                    });
+                }
+            } else {
+                processArr = {
+                    process: post_update.process_name_update
+                };
+            }
+
+            let startDate = moment( new Date(post_update.date_range_update.split('-')[0])).format();
+            let endDate = moment( new Date(post_update.date_range_update.split('-')[1])).format();
+
+            //console.log(startDate, endDate,  JSON.stringify(processArr) ,  post_update.comments_update, post_update.activity_id );
+
+            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                if(err){ return res.send({err: 'database connection error @ api post_update'})}
+
+                function updateData(){
+                    return new Promise(function(resolve, reject){
+
+                        connection.query({
+                            sql: 'UPDATE tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=? WHERE id = ?',
+                            values: [startDate, endDate, JSON.stringify(processArr),  post_update.comments_update, post_update.activity_id]
+                        }, function(err, results, fields){
+                            
+                            if(err){ return res.send({err: 'Update error'})}
+                            res.send({success: 'Updated successfully.'});
+                        });
+                        connection.release();
+                    });
+                }
+
+                updateData();
+            });
+        }
+
+    });
+
 
     app.get('/delete/:id', function(req, res){
         let post_id = req.params;
@@ -88,7 +140,7 @@ module.exports = function(app){
         }
         
     });
-
+    
     app.get('/', function(req, res){
         
         res.redirect('/rlogs');
@@ -130,7 +182,6 @@ module.exports = function(app){
                         for(let i=0; i<results.length;i++){
                             rlogs_list.push({
                                 id: results[i].id,
-                                date_range: results[i].date_range,
                                 startDate: moment(results[i].startDate).format('lll'),
                                 endDate: moment(results[i].endDate).format('lll'),
                                 process_name: JSON.parse(results[i].process_name),
