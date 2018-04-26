@@ -132,7 +132,7 @@ module.exports = function(app){
                             values: [post_id.id]
                         }, function(err, results, fields){
                             if(err){ return res.send({err: 'error while deleting in deleteInput'})}
-                            res.redirect('/rlogs');
+                            res.redirect('/activities');
                         });
                         connection.release();
                     });
