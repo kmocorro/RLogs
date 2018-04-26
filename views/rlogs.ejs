@@ -315,7 +315,7 @@
 
                 </div>
                 <% for(let k=0; k < rlogs_list.length; k++) { %>
-                <div class="modal modal-default fade" id="modal-danger<%= k %>">
+                <div class="modal modal-default" id="modal-danger<%= k %>">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -328,13 +328,13 @@
                           <br/>
                           <table id="modalsavedlogs" class="table table-bordered">
                             <thead>
-                              <tr class="danger">
+                              <tr class="warning">
                                   <th>Start Date</th>
                                   <th>End Date</th>
                                   <th>Process</th>
                                   <th>Comment</th>
                               </tr>
-                              <tr class="danger">
+                              <tr class="warning">
                                 <td><%= rlogs_list[k].startDate %></td>
                                 <td><%= rlogs_list[k].endDate %></td>
                                 
@@ -353,8 +353,8 @@
                           </table>
                         </div>
                         <div class="modal-footer">
-                          <a href="#d" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[k].id %>'">Delete</a>
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <a href="#d" class="btn btn-danger" role="button" onClick="window.location='http://10.3.170.77:7070/delete/<%= rlogs_list[k].id %>'">Yes, delete</a>
+                          <!--<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>-->
                         </div>
                       </div>
                       <!-- /.modal-content -->
@@ -371,33 +371,36 @@
                             <h4 class="modal-title">Edit activity</h4>
                           </div>
                           <div class="modal-body">
+                              
                               <div class="box-body">
                                   <form action="" method="POST" id="rlogs_form_update<%= k %>" name="rlogs_form_update" class="form-upload">
               
-                                      <div class="header_div" style="padding-bottom:5px;">
-                                          
-                                          <!-- Date range -->
-                                          <div class="form-group">
-                                            <h5>Datetime</h5>
+                                      <div class="header_div" style="padding-bottom:10px; padding-top:0px;">
+
+
+                                          <div class="comments_name_div" style="padding-bottom:5px;">
+
+                                              <h5>Change activity</h5> 
+                                              <textarea rows="5" class="form-control" id="comments_update" name="comments_update" placeholder="What's your new activity?"><%= rlogs_list[k].comments %></textarea>
+                                          </div>
+
+                                        <!-- Date range -->
+                                        <div class="form-group">
+                                            <h5><span class="label label-danger">*</span> New datetime</h5>
               
                                             <div class="input-group">
                                               <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                               </div>
-                                              <input type="text" class="form-control pull-right" id="date_range_update<%= k %>" name="date_range_update">
+                                              <input type="text" class="form-control pull-right" id="date_range_update<%= k %>" name="date_range_update" value="">
                                             </div>
                                             <!-- /.input group -->
                                           </div>
                                           
-                                          <div class="comments_name_div" style="padding-bottom:5px;">
-                                              <h5>Activity</h5> 
-                                              <textarea rows="5" class="form-control" id="comments_update" name="comments_update"  placeholder="What's your activity? Be specific."></textarea>
-                                          </div>
-              
-                                          <div class="process_name_div" style="padding-bottom:10px; width:100%;" >
-                                              <h5>Tags</h5> 
+                                          <div class="process_name_div" style="padding-bottom: 25px; width:100%;" >
+                                              <h5><span class="label label-danger">*</span> New tags</h5> 
 
-                                              <select type="text" class="form-control select2" multiple="multiple" id="process_name_update" name="process_name_update" data-placeholder="" style="width:100%">
+                                              <select type="text" class="form-control select2" multiple="multiple" id="process_name_update" name="process_name_update" data-placeholder=" edit tags" style="width:100%">
                                                 <% for(let i=0; i<process.length;i++) { %>
                                                   <option value="<%= process[i] %>">
                                                     <%= process[i] %>
@@ -418,20 +421,20 @@
                                           
                                       </div>
                                       <div class="submit_div" style="padding-top: 5px;">
-                                          <button id="btn-rlogs-update<%= k %>" class="btn btn-md btn-primary pull-right" name="Submit" type="Submit" value="Save" >Update Activity</button>
+                                          <button id="btn-rlogs-update<%= k %>" class="btn btn-md btn-success pull-right" name="Submit" type="Submit" value="Save" >Save Changes</button>
                                           <!--<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>-->
                                       </div>
                                       
                                   </form>
                               </div>
-                            
-                          </div> <!--  
+                              
+                          
+                          </div> 
                           <div class="modal-footer">
-                                                     <a href="#delete" class="btn btn-primary" role="button" onClick="window.location='http://10.3.170.77:7070/update/<%= rlogs_list[k].id %>'">Update</a>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                             
+                              <i class="pull-left">When editing activities, you need to <b>change</b> all remaining <span class="label label-danger">*</span> fields.</i>
 
-                          </div>-->
+                          </div>
                         </div>
                         <!-- /.modal-content -->
                       </div>
