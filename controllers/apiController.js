@@ -92,6 +92,11 @@ module.exports = function(app){
             let startDate = moment( new Date(post_update.date_range_update.split('-')[0])).format();
             let endDate = moment( new Date(post_update.date_range_update.split('-')[1])).format();
 
+            let ms = moment(endDate).diff(moment(startDate));
+            let d = moment.duration(ms);
+            let s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+            let durationVarchar = (s).toString();
+
             //console.log(startDate, endDate,  JSON.stringify(processArr) ,  post_update.comments_update, post_update.activity_id );
 
             mysqlCloud.connectAuth.getConnection(function(err, connection){
@@ -101,8 +106,8 @@ module.exports = function(app){
                     return new Promise(function(resolve, reject){
 
                         connection.query({
-                            sql: 'UPDATE tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=? WHERE id = ?',
-                            values: [startDate, endDate, JSON.stringify(processArr),  post_update.comments_update, post_update.activity_id]
+                            sql: 'UPDATE tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?, duration=? WHERE id = ?',
+                            values: [startDate, endDate, JSON.stringify(processArr),  post_update.comments_update, durationVarchar, post_update.activity_id]
                         }, function(err, results, fields){
                             
                             if(err){ return res.send({err: 'Update error'})}
