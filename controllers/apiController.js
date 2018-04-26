@@ -143,11 +143,11 @@ module.exports = function(app){
     
     app.get('/', function(req, res){
         
-        res.redirect('/rlogs');
+        res.redirect('/activities');
     });
 
 
-    app.get('/rlogs', function(req, res){
+    app.get('/activities', function(req, res){
 
         function processList(){
             return new Promise(function(resolve, reject){
