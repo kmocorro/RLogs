@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>  
-    <title>Fab4 Meta - Activity Logs </title>
+    <title>Fab4 Meta - Activity </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
@@ -51,7 +51,7 @@
 
 </head>
 
-<body class="sidebar-mini skin-black sidebar">
+<body class="sidebar-mini skin-black-light sidebar">
 
 <div class="wrapper">
   
@@ -174,12 +174,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Fab4 Activity
-        <small>loggr</small>
+        Fab4 Engineering
+        <small>activity uploader</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Logger</li>
+        <li class="active">activities</li>
       </ol>
     </section>
 
@@ -188,10 +188,10 @@
 
       <div class="row">
         <!-- Default box -->
-        <div class="col-md-4">
+        <div class="col-md-12">
             <div class="box box-primary" style="height: 100%;">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Upload your activities to Tableau</h3>
+                    <h3 class="box-title">Upload your activities</h3>
         
                     <div class="box-tools pull-right">
                     <!--<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
@@ -257,7 +257,7 @@
         </div>
           
         <!-- Log Box-->
-        <div class="col-md-8">
+        <div class="col-md-12">
           
             <div class="box box-default" style="height: 100%;">
                 <div class="box-header with-border">
@@ -385,7 +385,7 @@
 
                                         <!-- Date range -->
                                         <div class="form-group">
-                                            <h5><span class="label label-danger">*</span> New datetime</h5>
+                                            <h5><span class="label label-danger">*</span> New activity datetime</h5>
               
                                             <div class="input-group">
                                               <div class="input-group-addon">
@@ -397,7 +397,7 @@
                                           </div>
                                           
                                           <div class="process_name_div" style="padding-bottom: 25px; width:100%;" >
-                                              <h5><span class="label label-danger">*</span> New tags</h5> 
+                                              <h5><span class="label label-danger">*</span> New process tags</h5> 
 
                                               <select type="text" class="form-control select2" multiple="multiple" id="process_name_update" name="process_name_update" data-placeholder=" edit tags" style="width:100%">
                                                 <% for(let i=0; i<process.length;i++) { %>
