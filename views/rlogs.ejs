@@ -282,6 +282,7 @@
                         <th>End Date</th>
                         <th>Process</th>
                         <th>Activity</th>
+                        <th>Duration</th>
                         <th> </th>
                         </tr>
                         
@@ -299,8 +300,11 @@
                               <span class="label label-primary"><%= rlogs_list[i].process_name.process %></span>
                               <% } %>
                           </td>
+                          
                          
                         <td><%= rlogs_list[i].comments %></td>
+                        
+                        <td><%= rlogs_list[i].duration %></td>
                         <td>
                           <a href="#edit" data-toggle="modal" data-target="#modal-warning<%= i %>">edit</a>
                           <a href="#delete" data-toggle="modal" data-target="#modal-danger<%= i %>">delete</a>
@@ -331,7 +335,8 @@
                                   <th>Start Date</th>
                                   <th>End Date</th>
                                   <th>Process</th>
-                                  <th>Comment</th>
+                                  <th>Activity</th>
+                                  <th>Duration</th>
                               </tr>
                               <tr class="warning">
                                 <td><%= rlogs_list[k].startDate %></td>
@@ -347,6 +352,7 @@
                                 </td>
 
                                 <td><%= rlogs_list[k].comments %></td>
+                                <td><%= rlogs_list[k].duration %></td>
                               </tr>
                             </thead>
                           </table>
@@ -704,7 +710,7 @@
       'responseive': true,
       "columnDefs": [
     { "width": "12%", "targets": [0, 1, 2] },
-    { "width": "7%", "targets": -1 }
+    { "width": "7%", "targets": [-1, -2] }
   ]
     });
 

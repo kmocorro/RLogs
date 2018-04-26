@@ -33,6 +33,11 @@ module.exports = function(app){
             let startDate = moment( new Date(post_rlogs.date_range.split('-')[0])).format();
             let endDate = moment( new Date(post_rlogs.date_range.split('-')[1])).format();
 
+            let ms = moment(endDate).diff(moment(startDate));
+            let d = moment.duration(ms);
+            let s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+            let durationVarchar = (s).toString();
+     
             mysqlCloud.connectAuth.getConnection(function(err, connection){
                 if(err){ return res.send({err: 'database connection error @ api rlogs'})}
     
@@ -40,8 +45,8 @@ module.exports = function(app){
                     return new Promise(function(resolve, reject){
                         //console.log(connection);
                         connection.query({
-                            sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?',
-                            values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments]
+                            sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?, duration=?',
+                            values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments, durationVarchar]
                         }, function(err, results, fields){
                             if(err){ return res.send({err: 'database insert error @ api rlogs'})}
                             res.send({success: 'Form has been saved!'});
@@ -185,7 +190,8 @@ module.exports = function(app){
                                 startDate: moment(results[i].startDate).format('lll'),
                                 endDate: moment(results[i].endDate).format('lll'),
                                 process_name: JSON.parse(results[i].process_name),
-                                comments: results[i].comments
+                                comments: results[i].comments,
+                                duration: results[i].duration
                             });
                             
                         }
