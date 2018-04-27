@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/kmocorro/RLogs#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.5.9",
     "express": "^4.16.3",
+    "jsonwebtoken": "^8.2.1",
     "moment": "^2.22.1",
     "mysql": "^2.15.0",
     "serve-favicon": "^2.5.0"

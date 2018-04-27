@@ -1,7 +1,12 @@
 let moment = require('moment');
+let jwt = require('jsonwebtoken');
+let bcrypt = require('bcryptjs');
 let bodyParser = require('body-parser');
 let Promise = require('bluebird');
 let mysqlCloud = require('../dbConfig/dbCloud');
+
+let verifyToken = require('../auth/verifyToken');
+
 
 module.exports = function(app){
 
@@ -152,13 +157,15 @@ module.exports = function(app){
     });
     
     app.get('/', function(req, res){
-        
-        res.redirect('/activities');
+        res.redirect('/login');
     });
 
+    app.get('/login', function(res, res){
+        res.render('login');
+    });
 
-    app.get('/activities', function(req, res){
-
+    app.get('/activities', verifyToken, function(req, res){
+       
         function processList(){
             return new Promise(function(resolve, reject){
                 mysqlCloud.connectAuth.getConnection(function(err, connection){
@@ -213,7 +220,8 @@ module.exports = function(app){
             return rLogsHistory().then(function(rlogs_list){
                 
                 if(process_list && rlogs_list){
-                    res.render('rlogs',{process: process_list, rlogs_list});
+                  
+                    res.render('activities',{process: process_list, rlogs_list});
                 }
 
             });
