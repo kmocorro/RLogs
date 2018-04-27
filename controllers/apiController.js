@@ -13,11 +13,11 @@ module.exports = function(app){
     app.use(bodyParser.json({limit: '50mb'}));
     app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-    app.post('/api/runlogs', function(req, res){
+    app.post('/api/runlogs', verifyToken, function(req, res){
         let post_rlogs = req.body;
       //  console.log(post_rlogs);
         
-        if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments){
+        if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments && req.userID){
             
             let processArr = [];
 
@@ -45,24 +45,66 @@ module.exports = function(app){
      
             mysqlCloud.connectAuth.getConnection(function(err, connection){
                 if(err){ return res.send({err: 'database connection error @ api rlogs'})}
-    
-                function upload(){
-                    return new Promise(function(resolve, reject){
-                        //console.log(connection);
-                        connection.query({
-                            sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?, duration=?',
-                            values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments, durationVarchar]
-                        }, function(err, results, fields){
-                            if(err){ return res.send({err: 'database insert error @ api rlogs'})}
-                            res.send({success: 'Form has been saved!'});
-                        });
 
-                        connection.release();
-                        
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                            connection.release();
+                        });
+    
                     });
                 }
 
-                upload();
+                
+
+                checkName().then(function(user_details){
+
+                    function upload(){
+                        return new Promise(function(resolve, reject){
+                            //console.log(connection);
+                            connection.query({
+                                sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?, id_user=?, name=?, duration=?',
+                                values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments, user_details[0].id, user_details[0].name, durationVarchar]
+                            }, function(err, results, fields){
+                                if(err){ return res.send({err: 'database insert error @ api rlogs'})}
+                                res.send({success: 'Form has been saved!'});
+                            });
+    
+                            connection.release();
+                            
+                        });
+                    }
+
+                    return upload();
+                });
     
             });
         } else {
@@ -106,6 +148,7 @@ module.exports = function(app){
 
             mysqlCloud.connectAuth.getConnection(function(err, connection){
                 if(err){ return res.send({err: 'database connection error @ api post_update'})}
+                
 
                 function updateData(){
                     return new Promise(function(resolve, reject){
@@ -165,67 +208,120 @@ module.exports = function(app){
     });
 
     app.get('/activities', verifyToken, function(req, res){
-       
-        function processList(){
-            return new Promise(function(resolve, reject){
-                mysqlCloud.connectAuth.getConnection(function(err, connection){
-                    if(err){ return res.send({err: 'error connecting to database in processList'})}
-                    connection.query({
-                        sql: 'SELECT * FROM tbl_process_list'
-                    },  function(err, results, fields){
-                        if(err){ return res.send({err: 'error selecting the processes in processList '})}
-                        let process_list = [];
 
-                        for(let i = 0; i<results.length;i++){
-                            process_list.push(results[i].process);
-                        }
-                        resolve(process_list);
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
+
+        
+        if(req.userID){
+            function checkName(){
+                return new Promise(function(resolve, reject){
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                        connection.query({
+                            sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                            values: [req.userID]
+                        },  function(err, results, fields){
+                            let user_details = [];
+                            if(results){
+                               try{
+                                    user_details.push({
+                                        id: results[0].id,
+                                        name: results[0].name,
+                                        email: results[0].email,
+                                        department: results[0].department
+                                    });
+
+                                    resolve(user_details);
+                               } catch (error){
+                                    user_details.push({
+                                        id: 'undefined',
+                                        name: 'undefined',
+                                        email: 'undefined',
+                                        department: 'undefined'
+                                    });
+
+                                    resolve(user_details);
+                               }
+                            }
+                        });
+                        connection.release();
                     });
-                    connection.release();
+
                 });
-            });
-        }
+            }
 
-        function rLogsHistory(){
-            return new Promise(function(resolve, reject){
-                mysqlCloud.connectAuth.getConnection(function(err, connection){
-                    if(err){ return res.send({err: 'error connecting to database in rlogshistory'})}
-                    connection.query({
-                        sql: 'SELECT * FROM tbl_rlogs ORDER BY id DESC'
-                    },  function(err, results, fields){
-                        if(err){ return res.send({err: 'error selecting the rlogs in rlogshistory'})}
-                        let rlogs_list = [];
+            function processList(){
+                return new Promise(function(resolve, reject){
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        if(err){ return res.send({err: 'error connecting to database in processList'})}
+                        connection.query({
+                            sql: 'SELECT * FROM tbl_process_list'
+                        },  function(err, results, fields){
+                            if(err){ return res.send({err: 'error selecting the processes in processList '})}
+                            let process_list = [];
+    
+                            for(let i = 0; i<results.length;i++){
+                                process_list.push(results[i].process);
+                            }
+                            resolve(process_list);
+                        });
+                        connection.release();
+                    });
+                });
+            }
 
-                        for(let i=0; i<results.length;i++){
-                            rlogs_list.push({
-                                id: results[i].id,
-                                startDate: moment(results[i].startDate).format('lll'),
-                                endDate: moment(results[i].endDate).format('lll'),
-                                process_name: JSON.parse(results[i].process_name),
-                                comments: results[i].comments,
-                                duration: results[i].duration
+            checkName().then(function(user_details){
+                return processList().then(function(process_list){
+                    
+                    function rLogsHistory(){
+                        return new Promise(function(resolve, reject){
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                if(err){ return res.send({err: 'error connecting to database in rlogshistory'})}
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_rlogs WHERE id_user= ? ORDER BY id DESC ',
+                                    values:[user_details[0].id]
+                                },  function(err, results, fields){
+                                    if(err){ return res.send({err: 'error selecting the rlogs in rlogshistory'})}
+                                    let rlogs_list = [];
+            
+                                    for(let i=0; i<results.length;i++){
+                                        rlogs_list.push({
+                                            id: results[i].id,
+                                            startDate: moment(results[i].startDate).format('lll'),
+                                            endDate: moment(results[i].endDate).format('lll'),
+                                            process_name: JSON.parse(results[i].process_name),
+                                            comments: results[i].comments,
+                                            name: results[i].name,
+                                            duration: results[i].duration
+                                        });
+                                        
+                                    }
+                                    //console.log(JSON.parse(rlogs_list[0].process_name));
+            
+                                    resolve(rlogs_list);
+                                });
+                                connection.release();
                             });
-                            
-                        }
-                        //console.log(JSON.parse(rlogs_list[0].process_name));
+                        });
+                    }
 
-                        resolve(rlogs_list);
+                    return rLogsHistory().then(function(rlogs_list){
+                        
+                        if(process_list && rlogs_list){
+                          
+                            res.render('activities',{user_details, process: process_list, rlogs_list});
+                        }
+        
                     });
-                    connection.release();
                 });
+    
             });
+            
+
         }
 
-        processList().then(function(process_list){
-            return rLogsHistory().then(function(rlogs_list){
-                
-                if(process_list && rlogs_list){
-                  
-                    res.render('activities',{process: process_list, rlogs_list});
-                }
-
-            });
-        });
 
     });
 

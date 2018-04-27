@@ -77,14 +77,14 @@
             <li class="dropdown user user-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <!--<img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
-                <span class="hidden-xs">Client</span>
+                <span class="hidden-xs"><%= user_details[0].name %></span>
               </a>
               <ul class="dropdown-menu">
                 
                 <!-- Menu Body -->
                 <li class="user-body">
                   <div class="pull-right">
-                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                    <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
                   </div>
                   <!-- /.row -->
                 </li>
@@ -282,6 +282,7 @@
                         <th>End Date</th>
                         <th>Process</th>
                         <th>Activity</th>
+                        <th>Name</th>
                         <th>Duration</th>
                         <th> </th>
                         </tr>
@@ -303,7 +304,7 @@
                           
                          
                         <td><%= rlogs_list[i].comments %></td>
-                        
+                        <td><%= rlogs_list[i].name %></td>
                         <td><%= rlogs_list[i].duration %></td>
                         <td>
                           <a href="#edit" data-toggle="modal" data-target="#modal-warning<%= i %>">edit</a>
@@ -336,6 +337,7 @@
                                   <th>End Date</th>
                                   <th>Process</th>
                                   <th>Activity</th>
+                                  <th>Name</th>
                                   <th>Duration</th>
                               </tr>
                               <tr class="warning">
@@ -352,6 +354,7 @@
                                 </td>
 
                                 <td><%= rlogs_list[k].comments %></td>
+                                <td><%= rlogs_list[k].name %></td>
                                 <td><%= rlogs_list[k].duration %></td>
                               </tr>
                             </thead>
