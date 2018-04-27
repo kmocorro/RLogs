@@ -325,4 +325,100 @@ module.exports = function(app){
 
     });
 
+    app.get('/overallactivity', verifyToken, function(req, res){
+
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
+
+        
+        if(req.userID){
+            function checkName(){
+                return new Promise(function(resolve, reject){
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                        connection.query({
+                            sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                            values: [req.userID]
+                        },  function(err, results, fields){
+                            let user_details = [];
+                            if(results){
+                               try{
+                                    user_details.push({
+                                        id: results[0].id,
+                                        name: results[0].name,
+                                        email: results[0].email,
+                                        department: results[0].department
+                                    });
+
+                                    resolve(user_details);
+                               } catch (error){
+                                    user_details.push({
+                                        id: 'undefined',
+                                        name: 'undefined',
+                                        email: 'undefined',
+                                        department: 'undefined'
+                                    });
+
+                                    resolve(user_details);
+                               }
+                            }
+                        });
+                        connection.release();
+                    });
+
+                });
+            }
+
+            checkName().then(function(user_details){
+                
+                function rLogsHistory(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in rlogshistory'})}
+                            connection.query({
+                                sql: 'SELECT * FROM tbl_rlogs ORDER BY id DESC '
+                            },  function(err, results, fields){
+                                if(err){ return res.send({err: 'error selecting the rlogs in rlogshistory'})}
+                                let rlogs_list = [];
+        
+                                for(let i=0; i<results.length;i++){
+                                    rlogs_list.push({
+                                        id: results[i].id,
+                                        startDate: moment(results[i].startDate).format('lll'),
+                                        endDate: moment(results[i].endDate).format('lll'),
+                                        process_name: JSON.parse(results[i].process_name),
+                                        comments: results[i].comments,
+                                        name: results[i].name,
+                                        duration: results[i].duration
+                                    });
+                                    
+                                }
+                                //console.log(JSON.parse(rlogs_list[0].process_name));
+        
+                                resolve(rlogs_list);
+                            });
+                            connection.release();
+                        });
+                    });
+                }
+
+                return rLogsHistory().then(function(rlogs_list){
+                    
+                    if(rlogs_list){
+                      
+                        res.render('overallactivity',{user_details, rlogs_list});
+                    }
+    
+                });
+                    
+            
+    
+            });
+            
+
+        }
+
+    });
+
 }
