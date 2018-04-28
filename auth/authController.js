@@ -15,15 +15,15 @@ module.exports = function(app){
 
     app.post('/api/auth/login', function(req, res){
 
-        if(req.body.email && req.body.password){
+        if(req.body.username && req.body.password){
             
             function logInUser(){
                 return new Promise(function(resolve, reject){
                     mysqlCloud.connectAuth.getConnection(function(err, connection){
                         if(err){ return res.status(500).send({err: 'Error getting into database.'})};
                         connection.query({
-                            sql: 'SELECT * FROM deepmes_auth_login WHERE email=?',
-                            values: [req.body.email]
+                            sql: 'SELECT * FROM deepmes_auth_login WHERE username=?',
+                            values: [req.body.username]
                         },  function(err, results, fields){
                            
                             if(!results){
@@ -34,7 +34,7 @@ module.exports = function(app){
                                     let resultPass = results[0].password;
                                     let passwordIsValid = bcrypt.compareSync(req.body.password, resultPass);
 
-                                    if(!passwordIsValid){ return res.send({err: 'Invalid email or password.' })};
+                                    if(!passwordIsValid){ return res.send({err: 'Invalid username or password.' })};
 
                                     let token = jwt.sign({ id: results[0].id }, config.secret, { 
                                         expiresIn: 86400
@@ -44,7 +44,7 @@ module.exports = function(app){
                                     res.status(200).send({ auth: true });
                                 
                                 } catch(error){
-                                    res.send({err: 'Invalid email or password.'});
+                                    res.send({err: 'Invalid username or password.'});
                                 }
                                 
                             }
@@ -75,8 +75,8 @@ module.exports = function(app){
                     mysqlCloud.connectAuth.getConnection(function(err, connection){
                         if(err) return res.send({ error: 'registration database connection error'});
                         connection.query({
-                            sql: 'INSERT INTO deepmes_auth_login SET registration_date=? , name=?,  email=?, department=?, password=?',
-                            values: [moment(new Date()).format(), req.body.name, req.body.email, req.body.department, hashedBrown]
+                            sql: 'INSERT INTO deepmes_auth_login SET registration_date=?, username=?, name=?,  email=?, department=?, password=?',
+                            values: [moment(new Date()).format(), req.body.username, req.body.name, req.body.email, req.body.department, hashedBrown]
                         }, function(err, results, fields){
                             if(err) return res.send({ error: err});
                             

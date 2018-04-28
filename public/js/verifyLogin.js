@@ -1,7 +1,7 @@
 $('document').ready(function(){
     $('#login_auth').validate({
         rules:{
-            email: {
+            username: {
                 required: true
             },
             password: {
@@ -9,8 +9,8 @@ $('document').ready(function(){
             }
         },
         messages:{
-            email: 'Invalid fab4 meta email.',
-            password: 'Invalid fab4 meta password.'
+            username: 'Invalid username.',
+            password: 'Invalid password.'
         },
         submitHandler: submitForm
     });

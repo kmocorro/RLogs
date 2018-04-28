@@ -346,6 +346,7 @@ module.exports = function(app){
                                try{
                                     user_details.push({
                                         id: results[0].id,
+                                        username: results[0].username,
                                         name: results[0].name,
                                         email: results[0].email,
                                         department: results[0].department
@@ -355,6 +356,7 @@ module.exports = function(app){
                                } catch (error){
                                     user_details.push({
                                         id: 'undefined',
+                                        username: 'undefined',
                                         name: 'undefined',
                                         email: 'undefined',
                                         department: 'undefined'
