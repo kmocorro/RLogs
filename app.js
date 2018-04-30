@@ -1,6 +1,7 @@
 let express = require('express');
 let app = express();
 
+let cookieParser = require('cookie-parser');
 let authController = require('./auth/authController');
 let apiController = require('./controllers/apiController');
 
@@ -14,7 +15,7 @@ app.set('view engine', 'ejs');
 
 app.use(favicon(__dirname + '/public/style/favicon.ico'));
 
-
+app.use(cookieParser());
 authController(app);
 apiController(app);
 

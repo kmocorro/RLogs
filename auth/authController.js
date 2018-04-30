@@ -4,13 +4,10 @@ let config = require('./config');
 let moment = require('moment');
 let bodyParser = require('body-parser');
 let mysqlCloud = require('../dbConfig/dbCloud');
-let cookieParser = require('cookie-parser');
 
 let verifyToken = require('./verifyToken');
 
 module.exports = function(app){
-
-    app.use(cookieParser());
     
     app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -72,7 +69,6 @@ module.exports = function(app){
 
     });
     
-
     app.post('/register', function(req, res){
         
         if(req.body){
