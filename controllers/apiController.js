@@ -543,7 +543,7 @@ module.exports = function(app){
                                     ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
                                     box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
                                     location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
-                                    wafer_pcs:   post_xlf.xlf['PROPOSED CofA'][i][3],
+                                    wafer_pcs:   parseInt(post_xlf.xlf['PROPOSED CofA'][i][3]),
                                     block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
                                     totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
                                     seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
@@ -655,9 +655,9 @@ module.exports = function(app){
                                 xlf_proposed_obj.push({ // cleaning obj stick to current obj if NULL
                                     ingot_lot_id:   current_not_null_obj[0].ingot_lot_id,
                                     box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                    location_id: current_not_null_obj[0].location_id,
                                     wafer_pcs:   current_not_null_obj[0].wafer_pcs,
-                                    block_length:  post_xlf.xlf['PROPOSED CofA'][i][4],
+                                    block_length:  current_not_null_obj[0].block_length,
                                     totalCystal_length:  current_not_null_obj[0].totalCystal_length,
                                     seedBlock: current_not_null_obj[0].seedBlock,
                                     MCLT_top: current_not_null_obj[0].MCLT_top,
@@ -765,56 +765,52 @@ module.exports = function(app){
             form_details().then(function(form_details_obj){
                 return checkName().then(function(user_details){
                     return proposed_cofa().then(function(xlf_barcode_obj){
-                        mysqlCloud.connectAuth.getConnection(function(err,  connection){
+                        
+                        return ingot_barcode().then(function(xlf_barcode_obj){
+
                             for(let i=0;i<xlf_proposed_obj.length;i++){
                                 if(typeof xlf_proposed_obj[i].ingot_lot_id !== 'undefined' && xlf_proposed_obj[i].ingot_lot_id !== null && xlf_proposed_obj[i].ingot_lot_id.length > 0){
-                                
+
+                                    mysqlCloud.connectAuth.getConnection(function(err,  connection){
+
                                         if(err !== undefined){
                                             connection.query({
-                                                sql:'INSERT INTO tbl_tzs_coa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, username=?, box_id=?, location_id=?,wafer_pcs=?,block_length=?,totalCrystal_length=?,seedBlock=?,MCLT_top=?,MCLT_tail=?,RES_top=?,RES_tail=?,Oi_top=?,Oi_tail=?,Cs_top=?,Cs_tail=?,Dia_ave=?,Dia_std=?,Dia_min=?,Dia_max=?,Flat_ave=?,Flat_std=?,Flat_min=?,Flat_max=?,Flat_taper1=?,Flat_taper2=?,Flat_taper_min=?,Flat_taper_max=?,Corner_ave=?,Corner_std=?,Corner_min=?,Corner_max=?,Center_ave=?,Center_std=?,Center_min=?,Center_max=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,Ver_ave=?,Ver_std=?,Ver_min=?,Ver_max=?,Copper_content=?,Iron_content=?,AcceptReject=?',
+                                                sql:'INSERT INTO tbl_tzs_coa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, box_id=?, location_id=?,wafer_pcs=?,block_length=?,totalCrystal_length=?,seedBlock=?,MCLT_top=?,MCLT_tail=?,RES_top=?,RES_tail=?,Oi_top=?,Oi_tail=?,Cs_top=?,Cs_tail=?,Dia_ave=?,Dia_std=?,Dia_min=?,Dia_max=?,Flat_ave=?,Flat_std=?,Flat_min=?,Flat_max=?,Flat_taper1=?,Flat_taper2=?,Flat_taper_min=?,Flat_taper_max=?,Corner_ave=?,Corner_std=?,Corner_min=?,Corner_max=?,Center_ave=?,Center_std=?,Center_min=?,Center_max=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,Ver_ave=?,Ver_std=?,Ver_min=?,Ver_max=?,Copper_content=?,Iron_content=?,AcceptReject=?',
                                                 values: [xlf_proposed_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_proposed_obj[i].box_id, xlf_proposed_obj[i].location_id, xlf_proposed_obj[i].wafer_pcs, xlf_proposed_obj[i].block_length, xlf_proposed_obj[i].totalCystal_length, xlf_proposed_obj[i].seedBlock, xlf_proposed_obj[i].MCLT_top, xlf_proposed_obj[i].MCLT_tail, xlf_proposed_obj[i].RES_top, xlf_proposed_obj[i].RES_tail, xlf_proposed_obj[i].Oi_top, xlf_proposed_obj[i].Oi_tail, xlf_proposed_obj[i].Cs_top, xlf_proposed_obj[i].Cs_tail, xlf_proposed_obj[i].Dia_ave, xlf_proposed_obj[i].Dia_std, xlf_proposed_obj[i].Dia_min, xlf_proposed_obj[i].Dia_max, xlf_proposed_obj[i].Flat_ave, xlf_proposed_obj[i].Flat_std, xlf_proposed_obj[i].Flat_min, xlf_proposed_obj[i].Flat_max, xlf_proposed_obj[i].Flat_taper1, xlf_proposed_obj[i].Flat_taper2, xlf_proposed_obj[i].Flat_taper_min, xlf_proposed_obj[i].Flat_taper_max, xlf_proposed_obj[i].Corner_ave, xlf_proposed_obj[i].Corner_std, xlf_proposed_obj[i].Corner_min, xlf_proposed_obj[i].Corner_max, xlf_proposed_obj[i].Center_ave, xlf_proposed_obj[i].Center_std, xlf_proposed_obj[i].Center_min, xlf_proposed_obj[i].Center_max, xlf_proposed_obj[i].TTV_ave, xlf_proposed_obj[i].TTV_std, xlf_proposed_obj[i].TTV_min, xlf_proposed_obj[i].TTV_max, xlf_proposed_obj[i].RA_ave, xlf_proposed_obj[i].RA_std, xlf_proposed_obj[i].RA_min, xlf_proposed_obj[i].RA_max, xlf_proposed_obj[i].RZ_ave, xlf_proposed_obj[i].RZ_std, xlf_proposed_obj[i].RZ_min, xlf_proposed_obj[i].RZ_max, xlf_proposed_obj[i].Ver_ave, xlf_proposed_obj[i].Ver_std, xlf_proposed_obj[i].Ver_min, xlf_proposed_obj[i].Ver_max, xlf_proposed_obj[i].Copper_content, xlf_proposed_obj[i].Iron_content, xlf_proposed_obj[i].AcceptReject] 
                                             },  function(err, results, fields){
-                                                if(err){console.log(err)}
+                                                if(err){return res.send(JSON.stringify('Error: Failed in inserting ingot_coa. Check your file.'))}
                                                 //console.log('saved to db!');
                                             });
-                                        
+                                            connection.release();
                                         }
-                
+                                        
+                                    });
+
                                 }
                             }
-                            connection.release();
-                        });
-                        return ingot_barcode().then(function(xlf_barcode_obj){
-                            mysqlCloud.connectAuth.getConnection(function(err,  connection){
-                                //  preparing for upload ingot lot barcodes sheet
-                                let x = 0;
+                            
+                            for(let i=0;i<xlf_barcode_obj.length;i++){
 
-                                for(let i=0;i<xlf_barcode_obj.length;i++){
-                                    if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
-                                       
+                                if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
+                                    
+                                    mysqlCloud.connectAuth.getConnection(function(err,  connection){
                                         if(err !== undefined){
                                             connection.query({
-                                                sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=? bundle_barcode=?',
+                                                sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, bundle_barcode=?',
                                                 values: [xlf_barcode_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_barcode_obj[i].ingot_barcode]
                                             },  function(err, results, fields){
                                             //  console.log('saved');
+                                                if(err){ return res.send(JSON.stringify('Error: Failed in inserting ingot_barcode. Check your file.'))}
                                             });
-
+                                            connection.release();
                                         }
+                                    });
 
-                                        //  send responsed to client
-                                        if(x == xlf_barcode_obj.length){
-                                            
-                                            res.send(JSON.stringify('Success: File has been uploaded'));
-                                        }
-
-                                    x = x + 1;
-
-                                    }
                                 }
-                                
-                            connection.release(); // don't forget to release! -.-
-                            });
+                            }
+
+
+                            res.send(JSON.stringify('Success: File has been uploaded'));
 
                         });
 
@@ -833,10 +829,12 @@ module.exports = function(app){
         //console.log()
         //  get the consumed bcode list
             //console.log(mysqlCloud.connectAuth)
+            
+                    
+            mysqlCloud.connectAuth.getConnection(function(err, connection){
+
             function checkName(){
                 return new Promise(function(resolve, reject){
-                    
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
 
                         if(err){ return res.send({err: 'error connecting to database in checking user details'})}
                         
@@ -870,17 +868,12 @@ module.exports = function(app){
                             }
                         });
                     
-                    connection.release();
-                    });
-    
                 });
             }
 
             function consumedBarcodes(){
                 return new Promise(function(resolve, reject){
                     
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
-
                         connection.query({
                             sql: 'SELECT * FROM tbl_consumed_barcodes ORDER BY upload_date DESC'
                         },  function(err, results, fields){
@@ -897,15 +890,11 @@ module.exports = function(app){
                             resolve(consumed_obj);
                         });
 
-                    connection.release();
-                    });
                 });
             }
             
             function uploadHistory(){
                 return new Promise(function(resolve, reject){
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
-
                         connection.query({
                             sql: 'SELECT id, upload_time, order_no FROM tbl_ingot_lot_barcodes GROUP BY order_no ORDER BY id DESC'
                         }, function(err, results, fields){
@@ -919,14 +908,11 @@ module.exports = function(app){
                                 }
                             resolve(uploaded_history);
                         });
-                    connection.release();
-                    });
                 });
             }
 
             function supplierList(){
                 return new Promise(function(resolve, reject){
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
                         connection.query({
                             sql: 'SELECT supplier_id, supplier_name FROM tbl_supplier_list'
                         }, function(err, results, fields){
@@ -939,8 +925,6 @@ module.exports = function(app){
                                 }
                             resolve(supplier_list);
                         });
-                    connection.release();
-                    });
                 });
             }
             
@@ -961,6 +945,9 @@ module.exports = function(app){
                 });
             });
 
+
+            connection.release();
+        });
 
             
     });

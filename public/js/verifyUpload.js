@@ -72,14 +72,17 @@ $('document').ready(function(){
 					$("#btn-upload").html('Uploading...');
                     $("#btn-upload").prop("disabled",true);
                     $("#xlf").prop("disabled",true);
+
                     $("#error").fadeIn(0, function(){						
-                        $("#error").html('<div class="alert alert-success">'+response+' </div>');
+                        $("#error").html('<div class="alert alert-success">'+response+'</div>');
                     });
                     $("#btn-upload").html('Please wait...');
-                    setTimeout(' window.location.href="/coauploader"; ', 3000);
+
+                    window.location.reload(true);
+                    
                 } else {
                     $("#error").fadeIn(1000, function(){						
-                        $("#error").html('<div class="alert alert-danger">'+response+' </div>'); 
+                        $("#error").html('<div class="alert alert-danger">'+response+'</div>'); 
                         $("#btn-upload").prop("disabled",false);
                         $("#xlf").prop("disabled",false);
                         $("#btn-upload").html('Try again');
