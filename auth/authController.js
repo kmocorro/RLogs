@@ -4,14 +4,21 @@ let config = require('./config');
 let moment = require('moment');
 let bodyParser = require('body-parser');
 let mysqlCloud = require('../dbConfig/dbCloud');
-
+let cookieParser = require('cookie-parser');
 
 let verifyToken = require('./verifyToken');
 
 module.exports = function(app){
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(cookieParser());
+
+    app.get('/', function(req, res){
+        res.redirect('/login');
+    });
+
+    app.get('/login', function(res, res){
+        res.render('login');
+    });
 
     app.post('/api/auth/login', function(req, res){
 

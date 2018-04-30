@@ -56,7 +56,7 @@ $('document').ready(function(){
 
         $.ajax({
             type: 'POST',
-            url:  '/api/upload',
+            url:  '/api/coa/upload',
             data: toGo,
             contentType: 'application/json',
             dataType: 'json',
