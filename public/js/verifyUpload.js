@@ -67,14 +67,14 @@ $('document').ready(function(){
             },
             success: function(response){
                 //console.log(response);
-                if(response=="Success: File has been uploaded"){
+                if(response.success){
                     
 					$("#btn-upload").html('Uploading...');
                     $("#btn-upload").prop("disabled",true);
                     $("#xlf").prop("disabled",true);
 
                     $("#error").fadeIn(0, function(){						
-                        $("#error").html('<div class="alert alert-success">'+response+'</div>');
+                        $("#error").html('<div class="alert alert-warning">'+response.success+'</div>');
                     });
                     $("#btn-upload").html('Please wait...');
 

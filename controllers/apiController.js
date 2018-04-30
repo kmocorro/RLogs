@@ -822,7 +822,7 @@ module.exports = function(app){
                                 }
                             }
                             
-                            res.send(JSON.stringify('Success: File has been uploaded'));
+                            res.send(JSON.stringify({success: 'Please wait while we\'re uploading it to database. This might take for a while.'}));
                         });
                     });
                 });    

@@ -3,7 +3,7 @@ let config = require('./config');
 
 let connectAuth = mysql.createPool({
     multipleStatements: true,
-    connectionLimit: 100000,
+    connectionLimit: 100,
     host: config.config.host,
     user: config.config.user,
     password: config.config.password,
