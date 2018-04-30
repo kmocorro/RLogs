@@ -102,7 +102,7 @@ module.exports = function(app){
                                 res.send({success: 'Form has been saved!'});
                             });
     
-                        //    connection.release();
+                            connection.release();
                             
                         });
                     }
