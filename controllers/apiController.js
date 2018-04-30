@@ -50,7 +50,7 @@ module.exports = function(app){
 
                 function checkName(){
                     return new Promise(function(resolve, reject){
-                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        //mysqlCloud.connectAuth.getConnection(function(err, connection){
                             if(err){ return res.send({err: 'error connecting to database in checking user details'})}
                             connection.query({
                                 sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
@@ -82,7 +82,7 @@ module.exports = function(app){
                                 }
                             });
                             connection.release();
-                        });
+                        //});
     
                     });
                 }
