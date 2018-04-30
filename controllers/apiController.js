@@ -717,7 +717,7 @@ module.exports = function(app){
                         //  now that it's clean, resolve!
                         resolve(xlf_proposed_obj);
                     } else { // then res to client upload the required file
-                        res.send(JSON.stringify('Invalid CoA File Format'));
+                        res.send(JSON.stringify('Invalid TZS CoA File Format'));
                     }
 
                 });
@@ -765,7 +765,6 @@ module.exports = function(app){
             form_details().then(function(form_details_obj){
                 return checkName().then(function(user_details){
                     return proposed_cofa().then(function(xlf_barcode_obj){
-                        
                         return ingot_barcode().then(function(xlf_barcode_obj){
 
                             for(let i=0;i<xlf_proposed_obj.length;i++){
@@ -780,12 +779,13 @@ module.exports = function(app){
                                             },  function(err, results, fields){
                                                 if(err){return res.send(JSON.stringify('Error: Failed in inserting ingot_coa. Check your file.'))}
                                                 //console.log('saved to db!');
+                                                connection.release();
                                             });
-                                            connection.release();
+                                            
                                         }
-                                        
-                                    });
 
+                                    });
+                                    
                                 }
                             }
                             
@@ -794,6 +794,7 @@ module.exports = function(app){
                                 if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
                                     
                                     mysqlCloud.connectAuth.getConnection(function(err,  connection){
+
                                         if(err !== undefined){
                                             connection.query({
                                                 sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, bundle_barcode=?',
@@ -801,19 +802,19 @@ module.exports = function(app){
                                             },  function(err, results, fields){
                                             //  console.log('saved');
                                                 if(err){ return res.send(JSON.stringify('Error: Failed in inserting ingot_barcode. Check your file.'))}
+                                                connection.release();
                                             });
-                                            connection.release();
+                                            
                                         }
-                                    });
 
+                                    });
+                                    
                                 }
                             }
-
 
                             res.send(JSON.stringify('Success: File has been uploaded'));
 
                         });
-
                     });
                 });    
             });
