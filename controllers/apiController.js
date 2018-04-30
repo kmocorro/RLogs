@@ -541,232 +541,174 @@ module.exports = function(app){
                                 current_not_null_obj = [];  // hehe. SORRY for being global. I had to
                                 current_not_null_obj.push({ // current obj
                                     ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
-                                    box_no: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    pallet_no:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][2]),
-                                    location:   post_xlf.xlf['PROPOSED CofA'][i][3],
-                                    wafer_qty:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
-                                    distance_torm_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
-                                    length: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
-                                    top_end_length: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
-                                    MCLT_Top:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
-                                    MCLT_Tail:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
-                                    MCLT_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
-                                    RES_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
-                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
-                                    RES_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
-                                    RES_LSL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
-                                    OI_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
-                                    OI_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
-                                    OI_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
-                                    CS_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
-                                    CS_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
-                                    CS_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
-                                    DIA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
-                                    DIA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
-                                    DIA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
-                                    DIA_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
-                                    DIA_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
-                                    DIA_LSL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
-                                    FLAT_width_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
-                                    FLAT_width_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
-                                    FLAT_width_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
-                                    FLAT_width_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
-                                    FLAT_width_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
-                                    FLAT_width_LSL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
-                                    FLAT_length_taper1: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
-                                    FLAT_length_taper2: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
-                                    FLAT_length_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
-                                    FLAT_length_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
-                                    FLAT_length_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
-                                    CORNER_length_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
-                                    CORNER_length_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
-                                    CORNER_length_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
-                                    CORNER_length_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
-                                    CORNER_length_USL:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
-                                    CORNER_length_LSL:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
-                                    CENTER_thickness_ave:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
-                                    CENTER_thickness_std:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
-                                    CENTER_thickness_min:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
-                                    CENTER_thickness_max:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
-                                    CENTER_thickness_USL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
-                                    CENTER_thickness_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
-                                    TTV_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
-                                    TTV_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][51]),
-                                    TTV_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][52]),
-                                    TTV_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][53]),
-                                    TTV_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][54]),
-                                    RA_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][55]),
-                                    RA_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][56]),
-                                    RA_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][57]),
-                                    RA_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][58]),
-                                    RA_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][59]),
-                                    RZ_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][60]),
-                                    RZ_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][61]),
-                                    RZ_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][62]),
-                                    RZ_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][63]),
-                                    RZ_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][64]),
-                                    VERTICAL_ave:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][65]),
-                                    VERTICAL_std:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][66]),
-                                    VERTICAL_min:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][67]),
-                                    VERTICAL_max:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][68]),
-                                    VERTICAL_USL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][69]),
-                                    VERTICAL_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][70]),
-                                    Copper_content: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][71]) || 0,
-                                    Iron_content:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][72]) || 0,
-                                    DoesAcceptorReject: post_xlf.xlf['PROPOSED CofA'][i][73]
+                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                    wafer_pcs:   post_xlf.xlf['PROPOSED CofA'][i][3],
+                                    block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
+                                    totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
+                                    seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
+                                    MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
+                                    MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
+                                    RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
+                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
+                                    Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
+                                    Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
+                                    Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
+                                    Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
+                                    Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
+                                    Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
+                                    Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
+                                    Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
+                                    Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
+                                    Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
+                                    Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
+                                    Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
+                                    Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
+                                    Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
+                                    Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
+                                    Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
+                                    Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
+                                    Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
+                                    Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
+                                    Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
+                                    Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
+                                    Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
+                                    Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
+                                    Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
+                                    TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
+                                    TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
+                                    TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
+                                    TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
+                                    RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
+                                    RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
+                                    RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
+                                    RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
+                                    RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
+                                    RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
+                                    RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
+                                    RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
+                                    Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
+                                    Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
+                                    Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
+                                    Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
+                                    Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
+                                    Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
+                                    AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
                                 });                 
                                 xlf_proposed_obj.push({ //  cleaning obj
                                     ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
-                                    box_no: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    pallet_no:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][2]),
-                                    location:   post_xlf.xlf['PROPOSED CofA'][i][3],
-                                    wafer_qty:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
-                                    distance_torm_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
-                                    length: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
-                                    top_end_length: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
-                                    MCLT_Top:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
-                                    MCLT_Tail:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
-                                    MCLT_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
-                                    RES_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
-                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
-                                    RES_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
-                                    RES_LSL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
-                                    OI_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
-                                    OI_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
-                                    OI_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
-                                    CS_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
-                                    CS_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
-                                    CS_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
-                                    DIA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
-                                    DIA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
-                                    DIA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
-                                    DIA_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
-                                    DIA_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
-                                    DIA_LSL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
-                                    FLAT_width_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
-                                    FLAT_width_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
-                                    FLAT_width_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
-                                    FLAT_width_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
-                                    FLAT_width_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
-                                    FLAT_width_LSL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
-                                    FLAT_length_taper1: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
-                                    FLAT_length_taper2: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
-                                    FLAT_length_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
-                                    FLAT_length_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
-                                    FLAT_length_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
-                                    CORNER_length_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
-                                    CORNER_length_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
-                                    CORNER_length_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
-                                    CORNER_length_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
-                                    CORNER_length_USL:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
-                                    CORNER_length_LSL:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
-                                    CENTER_thickness_ave:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
-                                    CENTER_thickness_std:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
-                                    CENTER_thickness_min:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
-                                    CENTER_thickness_max:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
-                                    CENTER_thickness_USL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
-                                    CENTER_thickness_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
-                                    TTV_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
-                                    TTV_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][51]),
-                                    TTV_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][52]),
-                                    TTV_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][53]),
-                                    TTV_USL:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][54]),
-                                    RA_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][55]),
-                                    RA_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][56]),
-                                    RA_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][57]),
-                                    RA_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][58]),
-                                    RA_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][59]),
-                                    RZ_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][60]),
-                                    RZ_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][61]),
-                                    RZ_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][62]),
-                                    RZ_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][63]),
-                                    RZ_USL: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][64]),
-                                    VERTICAL_ave:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][65]),
-                                    VERTICAL_std:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][66]),
-                                    VERTICAL_min:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][67]),
-                                    VERTICAL_max:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][68]),
-                                    VERTICAL_USL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][69]),
-                                    VERTICAL_LSL:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][70]),
-                                    Copper_content: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][71]) || 0,
-                                    Iron_content:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][72]) || 0,
-                                    DoesAcceptorReject: post_xlf.xlf['PROPOSED CofA'][i][73]
+                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                    wafer_pcs:   post_xlf.xlf['PROPOSED CofA'][i][3],
+                                    block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
+                                    totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
+                                    seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
+                                    MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
+                                    MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
+                                    RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
+                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
+                                    Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
+                                    Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
+                                    Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
+                                    Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
+                                    Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
+                                    Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
+                                    Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
+                                    Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
+                                    Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
+                                    Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
+                                    Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
+                                    Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
+                                    Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
+                                    Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
+                                    Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
+                                    Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
+                                    Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
+                                    Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
+                                    Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
+                                    Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
+                                    Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
+                                    Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
+                                    Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
+                                    Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
+                                    TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
+                                    TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
+                                    TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
+                                    TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
+                                    RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
+                                    RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
+                                    RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
+                                    RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
+                                    RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
+                                    RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
+                                    RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
+                                    RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
+                                    Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
+                                    Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
+                                    Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
+                                    Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
+                                    Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
+                                    Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
+                                    AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
                                 });
                             } else {
                                 xlf_proposed_obj.push({ // cleaning obj stick to current obj if NULL
                                     ingot_lot_id:   current_not_null_obj[0].ingot_lot_id,
-                                    box_no: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    pallet_no:  post_xlf.xlf['PROPOSED CofA'][i][2],
-                                    location:   current_not_null_obj[0].location,
-                                    wafer_qty:  post_xlf.xlf['PROPOSED CofA'][i][4],
-                                    distance_torm_top:  current_not_null_obj[0].distance_torm_top,
-                                    length: current_not_null_obj[0].length,
-                                    top_end_length: current_not_null_obj[0].top_end_length,
-                                    MCLT_Top:   current_not_null_obj[0].MCLT_Top,
-                                    MCLT_Tail:  current_not_null_obj[0].MCLT_Tail,
-                                    MCLT_LSL:   current_not_null_obj[0].MCLT_LSL,
-                                    RES_top:    current_not_null_obj[0].RES_top,
+                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                    wafer_pcs:   current_not_null_obj[0].wafer_pcs,
+                                    block_length:  post_xlf.xlf['PROPOSED CofA'][i][4],
+                                    totalCystal_length:  current_not_null_obj[0].totalCystal_length,
+                                    seedBlock: current_not_null_obj[0].seedBlock,
+                                    MCLT_top: current_not_null_obj[0].MCLT_top,
+                                    MCLT_tail:   current_not_null_obj[0].MCLT_tail,
+                                    RES_top:  current_not_null_obj[0].RES_top,
                                     RES_tail:   current_not_null_obj[0].RES_tail,
-                                    RES_USL:    current_not_null_obj[0].RES_USL,
-                                    RES_LSL:    current_not_null_obj[0].RES_LSL,
-                                    OI_top: current_not_null_obj[0].OI_top,
-                                    OI_tail:    current_not_null_obj[0].OI_tail,
-                                    OI_USL: current_not_null_obj[0].OI_USL,
-                                    CS_top: current_not_null_obj[0].CS_top,
+                                    Oi_top:    current_not_null_obj[0].Oi_top,
+                                    Oi_tail:   current_not_null_obj[0].Oi_tail,
+                                    Cs_top:    current_not_null_obj[0].Cs_top,
+                                    Cs_tail:    current_not_null_obj[0].Cs_tail,
+                                    Dia_ave: current_not_null_obj[0].Dia_ave,
+                                    Dia_std:    current_not_null_obj[0].Dia_std,
+                                    Dia_min: current_not_null_obj[0].Dia_min,
+                                    Dia_max: current_not_null_obj[0].Dia_max,
                                     CS_tail:    current_not_null_obj[0].CS_tail,
-                                    CS_USL: current_not_null_obj[0].CS_USL,
-                                    DIA_ave:    current_not_null_obj[0].DIA_ave,
-                                    DIA_std:    current_not_null_obj[0].DIA_std,
-                                    DIA_min:    current_not_null_obj[0].DIA_min,
-                                    DIA_max:    current_not_null_obj[0].DIA_max,
-                                    DIA_USL:    current_not_null_obj[0].DIA_USL,
-                                    DIA_LSL:    current_not_null_obj[0].DIA_LSL,
-                                    FLAT_width_ave: current_not_null_obj[0].FLAT_width_ave,
-                                    FLAT_width_std: current_not_null_obj[0].FLAT_width_std,
-                                    FLAT_width_min: current_not_null_obj[0].FLAT_width_min,
-                                    FLAT_width_max: current_not_null_obj[0].FLAT_width_max,
-                                    FLAT_width_USL: current_not_null_obj[0].FLAT_width_USL,
-                                    FLAT_width_LSL: current_not_null_obj[0].FLAT_width_LSL,
-                                    FLAT_length_taper1: current_not_null_obj[0].FLAT_length_taper1,
-                                    FLAT_length_taper2: current_not_null_obj[0].FLAT_length_taper2,
-                                    FLAT_length_min:    current_not_null_obj[0].FLAT_length_min,
-                                    FLAT_length_max:    current_not_null_obj[0].FLAT_length_max,
-                                    FLAT_length_USL:    current_not_null_obj[0].FLAT_length_USL,
-                                    CORNER_length_ave:  current_not_null_obj[0].CORNER_length_ave,
-                                    CORNER_length_std:  current_not_null_obj[0].CORNER_length_std,
-                                    CORNER_length_min:  current_not_null_obj[0].CORNER_length_min,
-                                    CORNER_length_max:  current_not_null_obj[0].CORNER_length_max,
-                                    CORNER_length_USL:  current_not_null_obj[0].CORNER_length_USL,
-                                    CORNER_length_LSL:  current_not_null_obj[0].CORNER_length_LSL,
-                                    CENTER_thickness_ave:   current_not_null_obj[0].CENTER_thickness_ave,
-                                    CENTER_thickness_std:   current_not_null_obj[0].CENTER_thickness_std,
-                                    CENTER_thickness_min:   current_not_null_obj[0].CENTER_thickness_min,
-                                    CENTER_thickness_max:   current_not_null_obj[0].CENTER_thickness_max,
-                                    CENTER_thickness_USL:   current_not_null_obj[0].CENTER_thickness_USL,
-                                    CENTER_thickness_LSL:   current_not_null_obj[0].CENTER_thickness_LSL,
+                                    Flat_ave: current_not_null_obj[0].Flat_ave,
+                                    Flat_std:    current_not_null_obj[0].Flat_std,
+                                    Flat_min:    current_not_null_obj[0].Flat_min,
+                                    Flat_max:    current_not_null_obj[0].Flat_max,
+                                    Flat_taper1:    current_not_null_obj[0].Flat_taper1,
+                                    Flat_taper2:    current_not_null_obj[0].Flat_taper2,
+                                    Flat_taper_min:    current_not_null_obj[0].Flat_taper_min,
+                                    Flat_taper_max: current_not_null_obj[0].Flat_taper_max,
+                                    Corner_ave: current_not_null_obj[0].Corner_ave,
+                                    Corner_std: current_not_null_obj[0].Corner_std,
+                                    Corner_min: current_not_null_obj[0].Corner_min,
+                                    Corner_max: current_not_null_obj[0].Corner_max,
+                                    Center_ave: current_not_null_obj[0].Center_ave,
+                                    Center_std: current_not_null_obj[0].Center_std,
+                                    Center_min: current_not_null_obj[0].Center_min,
+                                    Center_max:    current_not_null_obj[0].Center_max,
                                     TTV_ave:    current_not_null_obj[0].TTV_ave,
                                     TTV_std:    current_not_null_obj[0].TTV_std,
-                                    TTV_min:    current_not_null_obj[0].TTV_min,
-                                    TTV_max:    current_not_null_obj[0].TTV_max,
-                                    TTV_USL:    current_not_null_obj[0].TTV_USL,
-                                    RA_ave: current_not_null_obj[0].RA_ave,
-                                    RA_std: current_not_null_obj[0].RA_std,
-                                    RA_min: current_not_null_obj[0].RA_min,
-                                    RA_max: current_not_null_obj[0].RA_max,
-                                    RA_USL: current_not_null_obj[0].RA_USL,
-                                    RZ_ave: current_not_null_obj[0].RZ_ave,
-                                    RZ_std: current_not_null_obj[0].RZ_std,
-                                    RZ_min: current_not_null_obj[0].RZ_min,
-                                    RZ_max: current_not_null_obj[0].RZ_max,
-                                    RZ_USL: current_not_null_obj[0].RZ_USL,
-                                    VERTICAL_ave:   current_not_null_obj[0].VERTICAL_ave,
-                                    VERTICAL_std:   current_not_null_obj[0].VERTICAL_std,
-                                    VERTICAL_min:   current_not_null_obj[0].VERTICAL_min,
-                                    VERTICAL_max:   current_not_null_obj[0].VERTICAL_max,
-                                    VERTICAL_USL:   current_not_null_obj[0].VERTICAL_USL,
-                                    VERTICAL_LSL:   current_not_null_obj[0].VERTICAL_LSL,
-                                    Copper_content: current_not_null_obj[0].Copper_content,
-                                    Iron_content:   current_not_null_obj[0].Iron_content,
-                                    DoesAcceptorReject: current_not_null_obj[0].DoesAcceptorReject
+                                    TTV_min:  current_not_null_obj[0].TTV_min,
+                                    TTV_max:  current_not_null_obj[0].TTV_max,
+                                    RA_ave:  current_not_null_obj[0].RA_ave,
+                                    RA_std:  current_not_null_obj[0].RA_std,
+                                    RA_min:  current_not_null_obj[0].RA_min,
+                                    RA_max:  current_not_null_obj[0].RA_max,
+                                    RZ_ave:   current_not_null_obj[0].RZ_ave,
+                                    RZ_std:   current_not_null_obj[0].RZ_std,
+                                    RZ_min:   current_not_null_obj[0].RZ_min,
+                                    RZ_max:   current_not_null_obj[0].RZ_max,
+                                    Ver_ave:   current_not_null_obj[0].Ver_ave,
+                                    Ver_std:   current_not_null_obj[0].Ver_std,
+                                    Ver_min:    current_not_null_obj[0].Ver_min,
+                                    Ver_max:    current_not_null_obj[0].Ver_max,
+                                    Copper_content:    current_not_null_obj[0].Copper_content,
+                                    Iron_content:    current_not_null_obj[0].Iron_content,
+                                    AcceptReject:    current_not_null_obj[0].AcceptReject
+                                    
                                 });
                             }
                         }
@@ -821,55 +763,59 @@ module.exports = function(app){
     
             /* Promise Invoker */
             form_details().then(function(form_details_obj){
-                return proposed_cofa().then(function(xlf_proposed_obj){
-                    return ingot_barcode().then(function(xlf_barcode_obj){
-                        return checkName().then(function(user_details){
-                            //  preparing for upload proposed cofa sheet
-                            //  to database table tbl_proposed_cofa
-                            mysqlCloud.connectAuth.getConnection(function(err,  connection){
+                return checkName().then(function(user_details){
+                    return proposed_cofa().then(function(xlf_barcode_obj){
+                        mysqlCloud.connectAuth.getConnection(function(err,  connection){
+                            for(let i=0;i<xlf_proposed_obj.length;i++){
+                                if(typeof xlf_proposed_obj[i].ingot_lot_id !== 'undefined' && xlf_proposed_obj[i].ingot_lot_id !== null && xlf_proposed_obj[i].ingot_lot_id.length > 0){
                                 
-                                for(let i=0;i<xlf_proposed_obj.length;i++){
-                                    if(typeof xlf_proposed_obj[i].ingot_lot_id !== 'undefined' && xlf_proposed_obj[i].ingot_lot_id !== null && xlf_proposed_obj[i].ingot_lot_id.length > 0){
-                                    
-                                            if(err !== undefined){
-                                                connection.query({
-                                                    sql:'INSERT INTO tbl_proposed_cofa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, box_no=?,pallet_no=?,location=?,wafer_qty=?,distance_torm_top=?,length=?,top_end_length=?,MCLT_Top=?,MCLT_Tail=?,MCLT_LSL=?,RES_top=?,RES_tail=?,RES_USL=?,RES_LSL=?,OI_top=?,OI_tail=?,OI_USL=?,CS_top=?,CS_tail=?,CS_USL=?,DIA_ave=?,DIA_std=?,DIA_min=?,DIA_max=?,DIA_USL=?,DIA_LSL=?,FLAT_width_ave=?,FLAT_width_std=?,FLAT_width_min=?,FLAT_width_max=?,FLAT_width_USL=?,FLAT_width_LSL=?,FLAT_length_taper1=?,FLAT_length_taper2=?,FLAT_length_min=?,FLAT_length_max=?,FLAT_length_USL=?,CORNER_length_ave=?,CORNER_length_std=?,CORNER_length_min=?,CORNER_length_max=?,CORNER_length_USL=?,CORNER_length_LSL=?,CENTER_thickness_ave=?,CENTER_thickness_std=?,CENTER_thickness_min=?,CENTER_thickness_max=?,CENTER_thickness_USL=?,CENTER_thickness_LSL=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,TTV_USL=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RA_USL=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,RZ_USL=?,VERTICAL_ave=?,VERTICAL_std=?,VERTICAL_min=?,VERTICAL_max=?,VERTICAL_USL=?,VERTICAL_LSL=?,Copper_content=?,Iron_content=?,DoesAcceptorReject=?,Upload_time=?,username=?',
-                                                    values: [xlf_proposed_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, xlf_proposed_obj[i].box_no, xlf_proposed_obj[i].pallet_no, xlf_proposed_obj[i].location, xlf_proposed_obj[i].wafer_qty, xlf_proposed_obj[i].distance_torm_top, xlf_proposed_obj[i].length, xlf_proposed_obj[i].top_end_length, xlf_proposed_obj[i].MCLT_Top, xlf_proposed_obj[i].MCLT_Tail, xlf_proposed_obj[i].MCLT_LSL, xlf_proposed_obj[i].RES_top, xlf_proposed_obj[i].RES_tail, xlf_proposed_obj[i].RES_USL, xlf_proposed_obj[i].RES_LSL, xlf_proposed_obj[i].OI_top, xlf_proposed_obj[i].OI_tail, xlf_proposed_obj[i].OI_USL, xlf_proposed_obj[i].CS_top, xlf_proposed_obj[i].CS_tail, xlf_proposed_obj[i].CS_USL, xlf_proposed_obj[i].DIA_ave, xlf_proposed_obj[i].DIA_std, xlf_proposed_obj[i].DIA_min, xlf_proposed_obj[i].DIA_max, xlf_proposed_obj[i].DIA_USL, xlf_proposed_obj[i].DIA_LSL, xlf_proposed_obj[i].FLAT_width_ave, xlf_proposed_obj[i].FLAT_width_std, xlf_proposed_obj[i].FLAT_width_min, xlf_proposed_obj[i].FLAT_width_max, xlf_proposed_obj[i].FLAT_width_USL, xlf_proposed_obj[i].FLAT_width_LSL, xlf_proposed_obj[i].FLAT_length_taper1, xlf_proposed_obj[i].FLAT_length_taper2, xlf_proposed_obj[i].FLAT_length_min, xlf_proposed_obj[i].FLAT_length_max, xlf_proposed_obj[i].FLAT_length_USL, xlf_proposed_obj[i].CORNER_length_ave, xlf_proposed_obj[i].CORNER_length_std, xlf_proposed_obj[i].CORNER_length_min, xlf_proposed_obj[i].CORNER_length_max, xlf_proposed_obj[i].CORNER_length_USL, xlf_proposed_obj[i].CORNER_length_LSL, xlf_proposed_obj[i].CENTER_thickness_ave, xlf_proposed_obj[i].CENTER_thickness_std, xlf_proposed_obj[i].CENTER_thickness_min, xlf_proposed_obj[i].CENTER_thickness_max, xlf_proposed_obj[i].CENTER_thickness_USL, xlf_proposed_obj[i].CENTER_thickness_LSL, xlf_proposed_obj[i].TTV_ave, xlf_proposed_obj[i].TTV_std, xlf_proposed_obj[i].TTV_min, xlf_proposed_obj[i].TTV_max, xlf_proposed_obj[i].TTV_USL, xlf_proposed_obj[i].RA_ave, xlf_proposed_obj[i].RA_std, xlf_proposed_obj[i].RA_min, xlf_proposed_obj[i].RA_max, xlf_proposed_obj[i].RA_USL, xlf_proposed_obj[i].RZ_ave, xlf_proposed_obj[i].RZ_std, xlf_proposed_obj[i].RZ_min, xlf_proposed_obj[i].RZ_max, xlf_proposed_obj[i].RZ_USL, xlf_proposed_obj[i].VERTICAL_ave, xlf_proposed_obj[i].VERTICAL_std, xlf_proposed_obj[i].VERTICAL_min, xlf_proposed_obj[i].VERTICAL_max, xlf_proposed_obj[i].VERTICAL_USL, xlf_proposed_obj[i].VERTICAL_LSL, xlf_proposed_obj[i].Copper_content, xlf_proposed_obj[i].Iron_content, xlf_proposed_obj[i].DoesAcceptorReject, new Date(), user_details[0].username] 
-                                                },  function(err, results, fields){
-                                                    if(err){console.log(err)}
-                                                    //console.log('saved to db!');
-                                                });
-                                            
-                                            }
-                    
-                                    }
+                                        if(err !== undefined){
+                                            connection.query({
+                                                sql:'INSERT INTO tbl_tzs_coa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, username=?, box_id=?, location_id=?,wafer_pcs=?,block_length=?,totalCrystal_length=?,seedBlock=?,MCLT_top=?,MCLT_tail=?,RES_top=?,RES_tail=?,Oi_top=?,Oi_tail=?,Cs_top=?,Cs_tail=?,Dia_ave=?,Dia_std=?,Dia_min=?,Dia_max=?,Flat_ave=?,Flat_std=?,Flat_min=?,Flat_max=?,Flat_taper1=?,Flat_taper2=?,Flat_taper_min=?,Flat_taper_max=?,Corner_ave=?,Corner_std=?,Corner_min=?,Corner_max=?,Center_ave=?,Center_std=?,Center_min=?,Center_max=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,Ver_ave=?,Ver_std=?,Ver_min=?,Ver_max=?,Copper_content=?,Iron_content=?,AcceptReject=?',
+                                                values: [xlf_proposed_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_proposed_obj[i].box_id, xlf_proposed_obj[i].location_id, xlf_proposed_obj[i].wafer_pcs, xlf_proposed_obj[i].block_length, xlf_proposed_obj[i].totalCystal_length, xlf_proposed_obj[i].seedBlock, xlf_proposed_obj[i].MCLT_top, xlf_proposed_obj[i].MCLT_tail, xlf_proposed_obj[i].RES_top, xlf_proposed_obj[i].RES_tail, xlf_proposed_obj[i].Oi_top, xlf_proposed_obj[i].Oi_tail, xlf_proposed_obj[i].Cs_top, xlf_proposed_obj[i].Cs_tail, xlf_proposed_obj[i].Dia_ave, xlf_proposed_obj[i].Dia_std, xlf_proposed_obj[i].Dia_min, xlf_proposed_obj[i].Dia_max, xlf_proposed_obj[i].Flat_ave, xlf_proposed_obj[i].Flat_std, xlf_proposed_obj[i].Flat_min, xlf_proposed_obj[i].Flat_max, xlf_proposed_obj[i].Flat_taper1, xlf_proposed_obj[i].Flat_taper2, xlf_proposed_obj[i].Flat_taper_min, xlf_proposed_obj[i].Flat_taper_max, xlf_proposed_obj[i].Corner_ave, xlf_proposed_obj[i].Corner_std, xlf_proposed_obj[i].Corner_min, xlf_proposed_obj[i].Corner_max, xlf_proposed_obj[i].Center_ave, xlf_proposed_obj[i].Center_std, xlf_proposed_obj[i].Center_min, xlf_proposed_obj[i].Center_max, xlf_proposed_obj[i].TTV_ave, xlf_proposed_obj[i].TTV_std, xlf_proposed_obj[i].TTV_min, xlf_proposed_obj[i].TTV_max, xlf_proposed_obj[i].RA_ave, xlf_proposed_obj[i].RA_std, xlf_proposed_obj[i].RA_min, xlf_proposed_obj[i].RA_max, xlf_proposed_obj[i].RZ_ave, xlf_proposed_obj[i].RZ_std, xlf_proposed_obj[i].RZ_min, xlf_proposed_obj[i].RZ_max, xlf_proposed_obj[i].Ver_ave, xlf_proposed_obj[i].Ver_std, xlf_proposed_obj[i].Ver_min, xlf_proposed_obj[i].Ver_max, xlf_proposed_obj[i].Copper_content, xlf_proposed_obj[i].Iron_content, xlf_proposed_obj[i].AcceptReject] 
+                                            },  function(err, results, fields){
+                                                if(err){console.log(err)}
+                                                //console.log('saved to db!');
+                                            });
+                                        
+                                        }
+                
                                 }
-                            
+                            }
+                            connection.release();
+                        });
+                        return ingot_barcode().then(function(xlf_barcode_obj){
+                            mysqlCloud.connectAuth.getConnection(function(err,  connection){
                                 //  preparing for upload ingot lot barcodes sheet
+                                let x = 0;
+
                                 for(let i=0;i<xlf_barcode_obj.length;i++){
                                     if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
-                                        
-                                    
+                                       
+                                        if(err !== undefined){
+                                            connection.query({
+                                                sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=? bundle_barcode=?',
+                                                values: [xlf_barcode_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_barcode_obj[i].ingot_barcode]
+                                            },  function(err, results, fields){
+                                            //  console.log('saved');
+                                            });
 
-                                            if(err !== undefined){
-                                                connection.query({
-                                                    sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=? bundle_barcode=?',
-                                                    values: [xlf_barcode_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_barcode_obj[i].ingot_barcode]
-                                                },  function(err, results, fields){
-                                                //  console.log('saved');
-                                                });
+                                        }
 
-                                            }
+                                        //  send responsed to client
+                                        if(x == xlf_barcode_obj.length){
                                             
-            
+                                            res.send(JSON.stringify('Success: File has been uploaded'));
+                                        }
+
+                                    x = x + 1;
+
                                     }
                                 }
-                            
+                                
                             connection.release(); // don't forget to release! -.-
                             });
 
-                            //  send responsed to client
-                            res.send(JSON.stringify('Success: File has been uploaded'));
                         });
 
                     });
