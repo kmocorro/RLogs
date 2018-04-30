@@ -6,7 +6,7 @@ function verifyToken(req, res, next){
     if(!token) return res.status(403).send('No token provided.') ;
 
     jwt.verify(token, config.secret, function(err, decoded){
-        if(err) return res.status(500).send('Failed to authenticate.');
+        if(err) return res.render('404');
 
         req.userID = decoded.id;
         next();
