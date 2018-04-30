@@ -26,6 +26,7 @@ module.exports = function(app){
             function logInUser(){
                 return new Promise(function(resolve, reject){
                     mysqlCloud.connectAuth.getConnection(function(err, connection){
+                        
                         if(err){ return res.status(500).send({err: 'Error getting into database.'})};
                         connection.query({
                             sql: 'SELECT * FROM deepmes_auth_login WHERE username=?',
