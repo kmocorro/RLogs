@@ -947,14 +947,15 @@ module.exports = function(app){
             function uploadHistory(){
                 return new Promise(function(resolve, reject){
                         connection.query({
-                            sql: 'SELECT id, upload_time, order_no FROM tbl_ingot_lot_barcodes GROUP BY order_no ORDER BY id DESC'
+                            sql: 'SELECT id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no ORDER BY id DESC'
                         }, function(err, results, fields){
                             let uploaded_history = [];
                                 for(let i=0; i<results.length;i++){
                                     uploaded_history.push({
                                         uploaded_history_id: results[i].id,
                                         uploaded_history_date: results[i].upload_time,
-                                        uploaded_history_order_no: results[i].order_no
+                                        uploaded_history_order_no: results[i].order_no,
+                                        uploaded_history_username: results[i].username
                                     });
                                 }
                             resolve(uploaded_history);

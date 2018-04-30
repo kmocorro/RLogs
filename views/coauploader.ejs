@@ -276,12 +276,14 @@
                         <tr>
                         <th>Upload Date</th>
                         <th>Invoice</th>
+                        <th>User</th>
                         </tr>
                       </thead>
                       <% for (let i=0; i < uploaded_history.length; i++) {  %>
                         <tr>
                         <td><%= uploaded_history[i].uploaded_history_date %></td>
                         <td><span class="label label-success"><%= uploaded_history[i].uploaded_history_order_no %></span></td>
+                        <td><%= uploaded_history[i].uploaded_history_username %></td>
                         </tr>
                       <% } %>
                     </table>
