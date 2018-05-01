@@ -439,396 +439,817 @@ module.exports = function(app){
         let xlf_proposed_obj = [];   //  cleaned obj going to db
         let xlf_barcode_obj = [];   //  "   "   "   "
 
-        
-        if(!post_xlf || !post_xlf.xlf){  //  post_xlf must have xl data
-            res.send(JSON.stringify('Upload the required CofA file'));
-        } else {
+        //console.log(post_xlf.header[2]['value']);
 
-            function checkName(){
-                return new Promise(function(resolve, reject){
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
-                        if(err){ return res.send({err: 'error connecting to database in checking user details'})}
-                        connection.query({
-                            sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
-                            values: [req.userID]
-                        },  function(err, results, fields){
-                            let user_details = [];
-                            if(results){
-                               try{
-                                    user_details.push({
-                                        id: results[0].id,
-                                        name: results[0].name,
-                                        username: results[0].username,
-                                        email: results[0].email,
-                                        department: results[0].department
-                                    });
+        /**
+         * Supplier's ID
+         * 1001 - TZS
+         * 1002 - ACHL
+         * 1003 - FERROTEC
+         * 1004 - NORSUN
+         * 1005 - ACMK
+         * 1006 - LONGI
+         */
 
-                                    resolve(user_details);
-                               } catch (error){
-                                    user_details.push({
-                                        id: 'undefined',
-                                        name: 'undefined',
-                                        username: results[0].username,
-                                        email: 'undefined',
-                                        department: 'undefined'
-                                    });
+        if(post_xlf.header[2]['value'] == '1001'){ // TZS
 
-                                    resolve(user_details);
-                               }
-                            }
-                        });
-                        connection.release();
-                    });
-
-                });
-            }
-
-            function form_details(){ // promise function for header
-                return new Promise(function(resolve, reject){
-
-                    //  make sure no null here
-                    if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
-
-                        let form_details_obj = [];
-                        let dDate = post_xlf.header[1]['value'];
-
-                        //  [0] - order no
-                        //  [1] - delivery date
-                        //  [2] - supplier id
-                        form_details_obj.push({
-                            supplier_id: post_xlf.header[2]['value'],
-                            delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
-                            order_no:   post_xlf.header[0]['value']
-                        });
-
-                        //  check existing order no
+            if(!post_xlf.xlf['PROPOSED CofA']){ 
+                res.send(JSON.stringify('Invalid TZS CoA file.'));
+            } else {
+    
+                function checkName(){
+                    return new Promise(function(resolve, reject){
                         mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
                             connection.query({
-                                sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
-                                values:[form_details_obj[0].order_no]
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
                             },  function(err, results, fields){
-
-                                //  if not undefined resolve the form details obj
-                                if(typeof results[0] !== 'undefined' && results[0] !== null){
-                                                                        
-                                    res.send(JSON.stringify('Invoice already exist'));
-
-                                } else {
-
-                                    //  resolve
-                                    resolve(form_details_obj);
-                                    //console.log(form_details_obj);
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
                                 }
-
                             });
-                        connection.release();
+                            connection.release();
                         });
-                    } else {    // if there's null in the form.. who knows,
-                        res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
-                    }
-                });
-            }
-
-            function proposed_cofa(){ // promise function for proposed cofa sheet
-                return new Promise(function(resolve, reject){
-                    
-                    //  check if the file has proposed cofa sheet
-                    if(typeof post_xlf.xlf['PROPOSED CofA'] !== 'undefined' && post_xlf.xlf['PROPOSED CofA'] !== null && post_xlf.xlf['PROPOSED CofA'].length > 0){
     
-                        /*  CLEANING LOOP */
-                        for(let i=3;i<post_xlf.xlf['PROPOSED CofA'].length;i++){ // loop through the obj
-                            if(typeof post_xlf.xlf['PROPOSED CofA'][i][0] !== 'undefined' && post_xlf.xlf['PROPOSED CofA'][i][0] !== null && post_xlf.xlf['PROPOSED CofA'][i][0] !== ''){
-                                current_not_null_obj = [];  // hehe. SORRY for being global. I had to
-                                current_not_null_obj.push({ // current obj
-                                    ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
-                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
-                                    wafer_pcs:   parseInt(post_xlf.xlf['PROPOSED CofA'][i][3]),
-                                    block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
-                                    totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
-                                    seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
-                                    MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
-                                    MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
-                                    RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
-                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
-                                    Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
-                                    Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
-                                    Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
-                                    Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
-                                    Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
-                                    Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
-                                    Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
-                                    Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
-                                    Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
-                                    Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
-                                    Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
-                                    Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
-                                    Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
-                                    Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
-                                    Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
-                                    Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
-                                    Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
-                                    Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
-                                    Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
-                                    Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
-                                    Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
-                                    Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
-                                    Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
-                                    Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
-                                    TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
-                                    TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
-                                    TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
-                                    TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
-                                    RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
-                                    RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
-                                    RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
-                                    RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
-                                    RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
-                                    RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
-                                    RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
-                                    RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
-                                    Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
-                                    Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
-                                    Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
-                                    Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
-                                    Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
-                                    Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
-                                    AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
-                                });                 
-                                xlf_proposed_obj.push({ //  cleaning obj
-                                    ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
-                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
-                                    wafer_pcs:   post_xlf.xlf['PROPOSED CofA'][i][3],
-                                    block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
-                                    totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
-                                    seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
-                                    MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
-                                    MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
-                                    RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
-                                    RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
-                                    Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
-                                    Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
-                                    Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
-                                    Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
-                                    Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
-                                    Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
-                                    Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
-                                    Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
-                                    Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
-                                    Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
-                                    Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
-                                    Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
-                                    Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
-                                    Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
-                                    Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
-                                    Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
-                                    Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
-                                    Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
-                                    Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
-                                    Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
-                                    Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
-                                    Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
-                                    Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
-                                    Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
-                                    TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
-                                    TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
-                                    TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
-                                    TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
-                                    RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
-                                    RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
-                                    RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
-                                    RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
-                                    RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
-                                    RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
-                                    RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
-                                    RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
-                                    Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
-                                    Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
-                                    Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
-                                    Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
-                                    Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
-                                    Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
-                                    AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
+                    });
+                }
+    
+                function form_details(){ // promise function for header
+                    return new Promise(function(resolve, reject){
+    
+                        //  make sure no null here
+                        if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
+    
+                            let form_details_obj = [];
+                            let dDate = post_xlf.header[1]['value'];
+    
+                            //  [0] - order no
+                            //  [1] - delivery date
+                            //  [2] - supplier id
+                            form_details_obj.push({
+                                supplier_id: post_xlf.header[2]['value'],
+                                delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
+                                order_no:   post_xlf.header[0]['value']
+                            });
+    
+                            //  check existing order no
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
+                                    values:[form_details_obj[0].order_no]
+                                },  function(err, results, fields){
+    
+                                    //  if not undefined resolve the form details obj
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null){
+                                                                            
+                                        res.send(JSON.stringify('Invoice already exist'));
+    
+                                    } else {
+    
+                                        //  resolve
+                                        resolve(form_details_obj);
+                                        //console.log(form_details_obj);
+                                    }
+    
                                 });
-                            } else {
-                                xlf_proposed_obj.push({ // cleaning obj stick to current obj if NULL
-                                    ingot_lot_id:   current_not_null_obj[0].ingot_lot_id,
-                                    box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
-                                    location_id: current_not_null_obj[0].location_id,
-                                    wafer_pcs:   current_not_null_obj[0].wafer_pcs,
-                                    block_length:  current_not_null_obj[0].block_length,
-                                    totalCystal_length:  current_not_null_obj[0].totalCystal_length,
-                                    seedBlock: current_not_null_obj[0].seedBlock,
-                                    MCLT_top: current_not_null_obj[0].MCLT_top,
-                                    MCLT_tail:   current_not_null_obj[0].MCLT_tail,
-                                    RES_top:  current_not_null_obj[0].RES_top,
-                                    RES_tail:   current_not_null_obj[0].RES_tail,
-                                    Oi_top:    current_not_null_obj[0].Oi_top,
-                                    Oi_tail:   current_not_null_obj[0].Oi_tail,
-                                    Cs_top:    current_not_null_obj[0].Cs_top,
-                                    Cs_tail:    current_not_null_obj[0].Cs_tail,
-                                    Dia_ave: current_not_null_obj[0].Dia_ave,
-                                    Dia_std:    current_not_null_obj[0].Dia_std,
-                                    Dia_min: current_not_null_obj[0].Dia_min,
-                                    Dia_max: current_not_null_obj[0].Dia_max,
-                                    CS_tail:    current_not_null_obj[0].CS_tail,
-                                    Flat_ave: current_not_null_obj[0].Flat_ave,
-                                    Flat_std:    current_not_null_obj[0].Flat_std,
-                                    Flat_min:    current_not_null_obj[0].Flat_min,
-                                    Flat_max:    current_not_null_obj[0].Flat_max,
-                                    Flat_taper1:    current_not_null_obj[0].Flat_taper1,
-                                    Flat_taper2:    current_not_null_obj[0].Flat_taper2,
-                                    Flat_taper_min:    current_not_null_obj[0].Flat_taper_min,
-                                    Flat_taper_max: current_not_null_obj[0].Flat_taper_max,
-                                    Corner_ave: current_not_null_obj[0].Corner_ave,
-                                    Corner_std: current_not_null_obj[0].Corner_std,
-                                    Corner_min: current_not_null_obj[0].Corner_min,
-                                    Corner_max: current_not_null_obj[0].Corner_max,
-                                    Center_ave: current_not_null_obj[0].Center_ave,
-                                    Center_std: current_not_null_obj[0].Center_std,
-                                    Center_min: current_not_null_obj[0].Center_min,
-                                    Center_max:    current_not_null_obj[0].Center_max,
-                                    TTV_ave:    current_not_null_obj[0].TTV_ave,
-                                    TTV_std:    current_not_null_obj[0].TTV_std,
-                                    TTV_min:  current_not_null_obj[0].TTV_min,
-                                    TTV_max:  current_not_null_obj[0].TTV_max,
-                                    RA_ave:  current_not_null_obj[0].RA_ave,
-                                    RA_std:  current_not_null_obj[0].RA_std,
-                                    RA_min:  current_not_null_obj[0].RA_min,
-                                    RA_max:  current_not_null_obj[0].RA_max,
-                                    RZ_ave:   current_not_null_obj[0].RZ_ave,
-                                    RZ_std:   current_not_null_obj[0].RZ_std,
-                                    RZ_min:   current_not_null_obj[0].RZ_min,
-                                    RZ_max:   current_not_null_obj[0].RZ_max,
-                                    Ver_ave:   current_not_null_obj[0].Ver_ave,
-                                    Ver_std:   current_not_null_obj[0].Ver_std,
-                                    Ver_min:    current_not_null_obj[0].Ver_min,
-                                    Ver_max:    current_not_null_obj[0].Ver_max,
-                                    Copper_content:    current_not_null_obj[0].Copper_content,
-                                    Iron_content:    current_not_null_obj[0].Iron_content,
-                                    AcceptReject:    current_not_null_obj[0].AcceptReject
-                                    
-                                });
-                            }
+                            connection.release();
+                            });
+                        } else {    // if there's null in the form.. who knows,
+                            res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
                         }
-                        /* end of cleaning */
+                    });
+                }
     
-                        //  now that it's clean, resolve!
-                        resolve(xlf_proposed_obj);
-                    } else { // then res to client upload the required file
-                        res.send(JSON.stringify('Invalid TZS CoA File Format'));
-                    }
-
-                });
-            }
-    
-            function ingot_barcode(){ // promise function for barcode sheet
-                return new Promise(function(resolve, reject){
-
-                    //  check if the file has ingot lot barcode sheet
-                    if(typeof post_xlf.xlf['Ingot Lot Barcodes'] !== 'undefined' && post_xlf.xlf['Ingot Lot Barcodes'] !== null && post_xlf.xlf['Ingot Lot Barcodes'].length > 0){
+                function proposed_cofa(){ // promise function for proposed cofa sheet
+                    return new Promise(function(resolve, reject){
                         
-                        /* CLEANING LOOP */
-                        for(let i=1;i<post_xlf.xlf['Ingot Lot Barcodes'].length;i++){
-                            if(typeof post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== 'undefined' && post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== null && post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== ''){
-                                
-                                //  loop per row
-                                for(let j=1;j<post_xlf.xlf['Ingot Lot Barcodes'][i].length;j++){
-                                    xlf_barcode_obj.push({
-                                        ingot_lot_id:   post_xlf.xlf['Ingot Lot Barcodes'][i][0],
-                                        ingot_barcode:  post_xlf.xlf['Ingot Lot Barcodes'][i][j]
+                        //  check if the file has proposed cofa sheet
+                        if(typeof post_xlf.xlf['PROPOSED CofA'] !== 'undefined' && post_xlf.xlf['PROPOSED CofA'] !== null && post_xlf.xlf['PROPOSED CofA'].length > 0){
+            
+                            /*  CLEANING LOOP */
+                            for(let i=3;i<post_xlf.xlf['PROPOSED CofA'].length;i++){ // loop through the obj
+                                if(typeof post_xlf.xlf['PROPOSED CofA'][i][0] !== 'undefined' && post_xlf.xlf['PROPOSED CofA'][i][0] !== null && post_xlf.xlf['PROPOSED CofA'][i][0] !== ''){
+                                    current_not_null_obj = [];  // hehe. SORRY for being global. I had to
+                                    current_not_null_obj.push({ // current obj
+                                        ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
+                                        box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                        location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                        wafer_pcs:   parseInt(post_xlf.xlf['PROPOSED CofA'][i][3]),
+                                        block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
+                                        totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
+                                        seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
+                                        MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
+                                        MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
+                                        RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
+                                        RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
+                                        Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
+                                        Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
+                                        Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
+                                        Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
+                                        Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
+                                        Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
+                                        Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
+                                        Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
+                                        Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
+                                        Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
+                                        Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
+                                        Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
+                                        Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
+                                        Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
+                                        Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
+                                        Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
+                                        Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
+                                        Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
+                                        Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
+                                        Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
+                                        Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
+                                        Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
+                                        Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
+                                        Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
+                                        TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
+                                        TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
+                                        TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
+                                        TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
+                                        RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
+                                        RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
+                                        RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
+                                        RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
+                                        RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
+                                        RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
+                                        RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
+                                        RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
+                                        Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
+                                        Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
+                                        Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
+                                        Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
+                                        Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
+                                        Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
+                                        AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
+                                    });                 
+                                    xlf_proposed_obj.push({ //  cleaning obj
+                                        ingot_lot_id: post_xlf.xlf['PROPOSED CofA'][i][0],
+                                        box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                        location_id:  post_xlf.xlf['PROPOSED CofA'][i][2],
+                                        wafer_pcs:   post_xlf.xlf['PROPOSED CofA'][i][3],
+                                        block_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][4]),
+                                        totalCystal_length:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][5]),
+                                        seedBlock: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][6]),
+                                        MCLT_top: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][7]),
+                                        MCLT_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][8]),
+                                        RES_top:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][9]),
+                                        RES_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][10]),
+                                        Oi_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][11]),
+                                        Oi_tail:   parseFloat(post_xlf.xlf['PROPOSED CofA'][i][12]),
+                                        Cs_top:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][13]),
+                                        Cs_tail:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][14]),
+                                        Dia_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][15]),
+                                        Dia_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][16]),
+                                        Dia_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][17]),
+                                        Dia_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][18]),
+                                        Flat_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][19]),
+                                        Flat_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][20]),
+                                        Flat_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][21]),
+                                        Flat_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][22]),
+                                        Flat_taper1:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][23]),
+                                        Flat_taper2:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][24]),
+                                        Flat_taper_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][25]),
+                                        Flat_taper_max:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][26]),
+                                        Corner_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][27]),
+                                        Corner_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][28]),
+                                        Corner_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][29]),
+                                        Corner_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][30]),
+                                        Center_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][31]),
+                                        Center_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][32]),
+                                        Center_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][33]),
+                                        Center_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][34]),
+                                        TTV_ave: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][35]),
+                                        TTV_std: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][36]),
+                                        TTV_min: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][37]),
+                                        TTV_max: parseFloat(post_xlf.xlf['PROPOSED CofA'][i][38]),
+                                        RA_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][39]),
+                                        RA_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][40]),
+                                        RA_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][41]),
+                                        RA_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][42]),
+                                        RZ_ave:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][43]),
+                                        RZ_std:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][44]),
+                                        RZ_min:    parseFloat(post_xlf.xlf['PROPOSED CofA'][i][45]),
+                                        RZ_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][46]),
+                                        Ver_ave:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][47]),
+                                        Ver_std:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][48]),
+                                        Ver_min:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][49]),
+                                        Ver_max:  parseFloat(post_xlf.xlf['PROPOSED CofA'][i][50]),
+                                        Copper_content:  post_xlf.xlf['PROPOSED CofA'][i][51],
+                                        Iron_content:   post_xlf.xlf['PROPOSED CofA'][i][52],
+                                        AcceptReject:   post_xlf.xlf['PROPOSED CofA'][i][53]
+                                    });
+                                } else {
+                                    xlf_proposed_obj.push({ // cleaning obj stick to current obj if NULL
+                                        ingot_lot_id:   current_not_null_obj[0].ingot_lot_id,
+                                        box_id: post_xlf.xlf['PROPOSED CofA'][i][1],
+                                        location_id: current_not_null_obj[0].location_id,
+                                        wafer_pcs:   current_not_null_obj[0].wafer_pcs,
+                                        block_length:  current_not_null_obj[0].block_length,
+                                        totalCystal_length:  current_not_null_obj[0].totalCystal_length,
+                                        seedBlock: current_not_null_obj[0].seedBlock,
+                                        MCLT_top: current_not_null_obj[0].MCLT_top,
+                                        MCLT_tail:   current_not_null_obj[0].MCLT_tail,
+                                        RES_top:  current_not_null_obj[0].RES_top,
+                                        RES_tail:   current_not_null_obj[0].RES_tail,
+                                        Oi_top:    current_not_null_obj[0].Oi_top,
+                                        Oi_tail:   current_not_null_obj[0].Oi_tail,
+                                        Cs_top:    current_not_null_obj[0].Cs_top,
+                                        Cs_tail:    current_not_null_obj[0].Cs_tail,
+                                        Dia_ave: current_not_null_obj[0].Dia_ave,
+                                        Dia_std:    current_not_null_obj[0].Dia_std,
+                                        Dia_min: current_not_null_obj[0].Dia_min,
+                                        Dia_max: current_not_null_obj[0].Dia_max,
+                                        CS_tail:    current_not_null_obj[0].CS_tail,
+                                        Flat_ave: current_not_null_obj[0].Flat_ave,
+                                        Flat_std:    current_not_null_obj[0].Flat_std,
+                                        Flat_min:    current_not_null_obj[0].Flat_min,
+                                        Flat_max:    current_not_null_obj[0].Flat_max,
+                                        Flat_taper1:    current_not_null_obj[0].Flat_taper1,
+                                        Flat_taper2:    current_not_null_obj[0].Flat_taper2,
+                                        Flat_taper_min:    current_not_null_obj[0].Flat_taper_min,
+                                        Flat_taper_max: current_not_null_obj[0].Flat_taper_max,
+                                        Corner_ave: current_not_null_obj[0].Corner_ave,
+                                        Corner_std: current_not_null_obj[0].Corner_std,
+                                        Corner_min: current_not_null_obj[0].Corner_min,
+                                        Corner_max: current_not_null_obj[0].Corner_max,
+                                        Center_ave: current_not_null_obj[0].Center_ave,
+                                        Center_std: current_not_null_obj[0].Center_std,
+                                        Center_min: current_not_null_obj[0].Center_min,
+                                        Center_max:    current_not_null_obj[0].Center_max,
+                                        TTV_ave:    current_not_null_obj[0].TTV_ave,
+                                        TTV_std:    current_not_null_obj[0].TTV_std,
+                                        TTV_min:  current_not_null_obj[0].TTV_min,
+                                        TTV_max:  current_not_null_obj[0].TTV_max,
+                                        RA_ave:  current_not_null_obj[0].RA_ave,
+                                        RA_std:  current_not_null_obj[0].RA_std,
+                                        RA_min:  current_not_null_obj[0].RA_min,
+                                        RA_max:  current_not_null_obj[0].RA_max,
+                                        RZ_ave:   current_not_null_obj[0].RZ_ave,
+                                        RZ_std:   current_not_null_obj[0].RZ_std,
+                                        RZ_min:   current_not_null_obj[0].RZ_min,
+                                        RZ_max:   current_not_null_obj[0].RZ_max,
+                                        Ver_ave:   current_not_null_obj[0].Ver_ave,
+                                        Ver_std:   current_not_null_obj[0].Ver_std,
+                                        Ver_min:    current_not_null_obj[0].Ver_min,
+                                        Ver_max:    current_not_null_obj[0].Ver_max,
+                                        Copper_content:    current_not_null_obj[0].Copper_content,
+                                        Iron_content:    current_not_null_obj[0].Iron_content,
+                                        AcceptReject:    current_not_null_obj[0].AcceptReject
+                                        
                                     });
                                 }
-                            } 
-                                /* 1.1 PATCH - Missed row  
-                                else { // if there's missing ingot lot # 
-                                res.send(JSON.stringify('Error: Missing Ingot Lot # at barcode sheet'));
-                                reject('Error: Missing Ingot Lot # at barcode sheet');
-                            } */
+                            }
+                            /* end of cleaning */
+        
+                            //  now that it's clean, resolve!
+                            resolve(xlf_proposed_obj);
+                        } else { // then res to client upload the required file
+                            res.send(JSON.stringify('Invalid TZS Format.'));
                         }
-                        /* end of cleaning */
-
-                        //  resolve cleaned object
-                        resolve(xlf_barcode_obj);
-                       // console.log(xlf_barcode_obj);
+                       
+                        
+                    });
+                }
+        
+                function ingot_barcode(){ // promise function for barcode sheet
+                    return new Promise(function(resolve, reject){
     
-                    } else {    // then res to client upload the required file
-                        res.send(JSON.stringify('Error ingot barcode: Upload CofA File with correct template'));
-                    }
-                });
-            }
-
-            /*  just add more function if there's more sheeeets to come */
+                        //  check if the file has ingot lot barcode sheet
+                        if(typeof post_xlf.xlf['Ingot Lot Barcodes'] !== 'undefined' && post_xlf.xlf['Ingot Lot Barcodes'] !== null && post_xlf.xlf['Ingot Lot Barcodes'].length > 0){
+                            
+                            /* CLEANING LOOP */
+                            for(let i=1;i<post_xlf.xlf['Ingot Lot Barcodes'].length;i++){
+                                if(typeof post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== 'undefined' && post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== null && post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== ''){
+                                    
+                                    //  loop per row
+                                    for(let j=1;j<post_xlf.xlf['Ingot Lot Barcodes'][i].length;j++){
+                                        xlf_barcode_obj.push({
+                                            ingot_lot_id:   post_xlf.xlf['Ingot Lot Barcodes'][i][0],
+                                            ingot_barcode:  post_xlf.xlf['Ingot Lot Barcodes'][i][j]
+                                        });
+                                    }
+                                } 
+                                    /* 1.1 PATCH - Missed row  
+                                    else { // if there's missing ingot lot # 
+                                    res.send(JSON.stringify('Error: Missing Ingot Lot # at barcode sheet'));
+                                    reject('Error: Missing Ingot Lot # at barcode sheet');
+                                } */
+                            }
+                            /* end of cleaning */
     
-            /* Promise Invoker */
-            form_details().then(function(form_details_obj){
-                return checkName().then(function(user_details){
-                    return proposed_cofa().then(function(xlf_barcode_obj){
-                        return ingot_barcode().then(function(xlf_barcode_obj){
-
-                            for(let i=0;i<xlf_proposed_obj.length;i++){
-                                        
-                                if(typeof xlf_proposed_obj[i].ingot_lot_id !== 'undefined' && xlf_proposed_obj[i].ingot_lot_id !== null && xlf_proposed_obj[i].ingot_lot_id.length > 0){
-
-                                    mysqlCloud.connectAuth.getConnection(function(err,  connection){
-                                        
-                                        if(err !== undefined){
-                                            if(connection){
-                                                connection.query({
-                                                    sql:'INSERT INTO tbl_tzs_coa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, box_id=?, location_id=?,wafer_pcs=?,block_length=?,totalCrystal_length=?,seedBlock=?,MCLT_top=?,MCLT_tail=?,RES_top=?,RES_tail=?,Oi_top=?,Oi_tail=?,Cs_top=?,Cs_tail=?,Dia_ave=?,Dia_std=?,Dia_min=?,Dia_max=?,Flat_ave=?,Flat_std=?,Flat_min=?,Flat_max=?,Flat_taper1=?,Flat_taper2=?,Flat_taper_min=?,Flat_taper_max=?,Corner_ave=?,Corner_std=?,Corner_min=?,Corner_max=?,Center_ave=?,Center_std=?,Center_min=?,Center_max=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,Ver_ave=?,Ver_std=?,Ver_min=?,Ver_max=?,Copper_content=?,Iron_content=?,AcceptReject=?',
-                                                    values: [xlf_proposed_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_proposed_obj[i].box_id, xlf_proposed_obj[i].location_id, xlf_proposed_obj[i].wafer_pcs, xlf_proposed_obj[i].block_length, xlf_proposed_obj[i].totalCystal_length, xlf_proposed_obj[i].seedBlock, xlf_proposed_obj[i].MCLT_top, xlf_proposed_obj[i].MCLT_tail, xlf_proposed_obj[i].RES_top, xlf_proposed_obj[i].RES_tail, xlf_proposed_obj[i].Oi_top, xlf_proposed_obj[i].Oi_tail, xlf_proposed_obj[i].Cs_top, xlf_proposed_obj[i].Cs_tail, xlf_proposed_obj[i].Dia_ave, xlf_proposed_obj[i].Dia_std, xlf_proposed_obj[i].Dia_min, xlf_proposed_obj[i].Dia_max, xlf_proposed_obj[i].Flat_ave, xlf_proposed_obj[i].Flat_std, xlf_proposed_obj[i].Flat_min, xlf_proposed_obj[i].Flat_max, xlf_proposed_obj[i].Flat_taper1, xlf_proposed_obj[i].Flat_taper2, xlf_proposed_obj[i].Flat_taper_min, xlf_proposed_obj[i].Flat_taper_max, xlf_proposed_obj[i].Corner_ave, xlf_proposed_obj[i].Corner_std, xlf_proposed_obj[i].Corner_min, xlf_proposed_obj[i].Corner_max, xlf_proposed_obj[i].Center_ave, xlf_proposed_obj[i].Center_std, xlf_proposed_obj[i].Center_min, xlf_proposed_obj[i].Center_max, xlf_proposed_obj[i].TTV_ave, xlf_proposed_obj[i].TTV_std, xlf_proposed_obj[i].TTV_min, xlf_proposed_obj[i].TTV_max, xlf_proposed_obj[i].RA_ave, xlf_proposed_obj[i].RA_std, xlf_proposed_obj[i].RA_min, xlf_proposed_obj[i].RA_max, xlf_proposed_obj[i].RZ_ave, xlf_proposed_obj[i].RZ_std, xlf_proposed_obj[i].RZ_min, xlf_proposed_obj[i].RZ_max, xlf_proposed_obj[i].Ver_ave, xlf_proposed_obj[i].Ver_std, xlf_proposed_obj[i].Ver_min, xlf_proposed_obj[i].Ver_max, xlf_proposed_obj[i].Copper_content, xlf_proposed_obj[i].Iron_content, xlf_proposed_obj[i].AcceptReject] 
-                                                },  function(err, results, fields){
-                                                    if(err){return res.send(JSON.stringify('Error: Failed in inserting ingot_coa. Check your file.'))}
-                                                    //console.log('saved to db!');
-                                                });
+                            //  resolve cleaned object
+                            resolve(xlf_barcode_obj);
+                           // console.log(xlf_barcode_obj);
+        
+                        } else {    // then res to client upload the required file
+                            res.send(JSON.stringify('Error ingot barcode: Upload CofA File with correct template'));
+                        }
+                    });
+                }
+    
+                /*  just add more function if there's more sheeeets to come */
+        
+                /* Promise Invoker */
+                form_details().then(function(form_details_obj){
+                    return checkName().then(function(user_details){
+                        return proposed_cofa().then(function(xlf_barcode_obj){
+                            return ingot_barcode().then(function(xlf_barcode_obj){
+    
+                                for(let i=0;i<xlf_proposed_obj.length;i++){
+                                            
+                                    if(typeof xlf_proposed_obj[i].ingot_lot_id !== 'undefined' && xlf_proposed_obj[i].ingot_lot_id !== null && xlf_proposed_obj[i].ingot_lot_id.length > 0){
+    
+                                        mysqlCloud.connectAuth.getConnection(function(err,  connection){
+                                            
+                                            if(err !== undefined){
+                                                if(connection){
+                                                    connection.query({
+                                                        sql:'INSERT INTO tbl_tzs_coa SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, box_id=?, location_id=?,wafer_pcs=?,block_length=?,totalCrystal_length=?,seedBlock=?,MCLT_top=?,MCLT_tail=?,RES_top=?,RES_tail=?,Oi_top=?,Oi_tail=?,Cs_top=?,Cs_tail=?,Dia_ave=?,Dia_std=?,Dia_min=?,Dia_max=?,Flat_ave=?,Flat_std=?,Flat_min=?,Flat_max=?,Flat_taper1=?,Flat_taper2=?,Flat_taper_min=?,Flat_taper_max=?,Corner_ave=?,Corner_std=?,Corner_min=?,Corner_max=?,Center_ave=?,Center_std=?,Center_min=?,Center_max=?,TTV_ave=?,TTV_std=?,TTV_min=?,TTV_max=?,RA_ave=?,RA_std=?,RA_min=?,RA_max=?,RZ_ave=?,RZ_std=?,RZ_min=?,RZ_max=?,Ver_ave=?,Ver_std=?,Ver_min=?,Ver_max=?,Copper_content=?,Iron_content=?,AcceptReject=?',
+                                                        values: [xlf_proposed_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_proposed_obj[i].box_id, xlf_proposed_obj[i].location_id, xlf_proposed_obj[i].wafer_pcs, xlf_proposed_obj[i].block_length, xlf_proposed_obj[i].totalCystal_length, xlf_proposed_obj[i].seedBlock, xlf_proposed_obj[i].MCLT_top, xlf_proposed_obj[i].MCLT_tail, xlf_proposed_obj[i].RES_top, xlf_proposed_obj[i].RES_tail, xlf_proposed_obj[i].Oi_top, xlf_proposed_obj[i].Oi_tail, xlf_proposed_obj[i].Cs_top, xlf_proposed_obj[i].Cs_tail, xlf_proposed_obj[i].Dia_ave, xlf_proposed_obj[i].Dia_std, xlf_proposed_obj[i].Dia_min, xlf_proposed_obj[i].Dia_max, xlf_proposed_obj[i].Flat_ave, xlf_proposed_obj[i].Flat_std, xlf_proposed_obj[i].Flat_min, xlf_proposed_obj[i].Flat_max, xlf_proposed_obj[i].Flat_taper1, xlf_proposed_obj[i].Flat_taper2, xlf_proposed_obj[i].Flat_taper_min, xlf_proposed_obj[i].Flat_taper_max, xlf_proposed_obj[i].Corner_ave, xlf_proposed_obj[i].Corner_std, xlf_proposed_obj[i].Corner_min, xlf_proposed_obj[i].Corner_max, xlf_proposed_obj[i].Center_ave, xlf_proposed_obj[i].Center_std, xlf_proposed_obj[i].Center_min, xlf_proposed_obj[i].Center_max, xlf_proposed_obj[i].TTV_ave, xlf_proposed_obj[i].TTV_std, xlf_proposed_obj[i].TTV_min, xlf_proposed_obj[i].TTV_max, xlf_proposed_obj[i].RA_ave, xlf_proposed_obj[i].RA_std, xlf_proposed_obj[i].RA_min, xlf_proposed_obj[i].RA_max, xlf_proposed_obj[i].RZ_ave, xlf_proposed_obj[i].RZ_std, xlf_proposed_obj[i].RZ_min, xlf_proposed_obj[i].RZ_max, xlf_proposed_obj[i].Ver_ave, xlf_proposed_obj[i].Ver_std, xlf_proposed_obj[i].Ver_min, xlf_proposed_obj[i].Ver_max, xlf_proposed_obj[i].Copper_content, xlf_proposed_obj[i].Iron_content, xlf_proposed_obj[i].AcceptReject] 
+                                                    },  function(err, results, fields){
+                                                        if(err){return res.send(JSON.stringify('Error: Failed in inserting ingot_coa. Check your file.'))}
+                                                        //console.log('saved to db!');
+                                                    });
+                                                    
+                                                connection.release();
+                                                }
                                                 
-                                            connection.release();
                                             }
                                             
-                                        }
-                                        
-
-                                    });
-
+    
+                                        });
+    
+                                    }
                                 }
-                            }
-
-                            // console.log('proposed: ' + xlf_barcode_obj.length);
-                            for(let i=0;i<xlf_barcode_obj.length;i++){
+    
+                                // console.log('proposed: ' + xlf_barcode_obj.length);
+                                for(let i=0;i<xlf_barcode_obj.length;i++){
+                                            
+                                    if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
                                         
-                                if(typeof xlf_barcode_obj[i].ingot_lot_id !== 'undefined' && xlf_barcode_obj[i].ingot_lot_id !== null && xlf_barcode_obj[i].ingot_lot_id.length > 0){
-                                    
-                                    mysqlCloud.connectAuth.getConnection(function(err,  connection){
-                                        
-                                        if(err !== undefined){
-                                            if(connection){
-                                                
-                                                connection.query({
-                                                    sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, bundle_barcode=?',
-                                                    values: [xlf_barcode_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_barcode_obj[i].ingot_barcode]
-                                                },  function(err, results, fields){
-                                                //  console.log('saved');
-                                                    if(err){ return res.send(JSON.stringify('Error: Failed in inserting ingot_barcode. Check your file.'))}
-                                                });
-                                                connection.release();
-
+                                        mysqlCloud.connectAuth.getConnection(function(err,  connection){
+                                            
+                                            if(err !== undefined){
+                                                if(connection){
+                                                    
+                                                    connection.query({
+                                                        sql: 'INSERT INTO tbl_ingot_lot_barcodes SET ingot_lot_id=?, supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, bundle_barcode=?',
+                                                        values: [xlf_barcode_obj[i].ingot_lot_id, form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, xlf_barcode_obj[i].ingot_barcode]
+                                                    },  function(err, results, fields){
+                                                    //  console.log('saved');
+                                                        if(err){ return res.send(JSON.stringify('Error: Failed in inserting ingot_barcode. Check your file.'))}
+                                                    });
+                                                    connection.release();
+    
+                                                }
                                             }
-                                        }
-                                        
-                                       
-                                    });
-
+                                            
+                                           
+                                        });
+    
+                                    }
                                 }
-                            }
+                                
+                                res.send(JSON.stringify({success: 'Please wait while we\'re uploading it to database. Do not Close or Refresh this window.'}));
+                            });
+                        });
+                    });    
+                });
+                
+            }
+
+        } else if(post_xlf.header[2]['value'] == '1002'){ // ACHL
+
+            if(!post_xlf.xlf['Pallet_ID Carton_ID LOT_ID']){
+                res.send(JSON.stringify('Invalid ACHL CoA File.'));
+            } else {
+
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                            connection.release();
+                        });
+    
+                    });
+                }
+    
+                function form_details(){ // promise function for header
+                    return new Promise(function(resolve, reject){
+    
+                        //  make sure no null here
+                        if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
+    
+                            let form_details_obj = [];
+                            let dDate = post_xlf.header[1]['value'];
+    
+                            //  [0] - order no
+                            //  [1] - delivery date
+                            //  [2] - supplier id
+                            form_details_obj.push({
+                                supplier_id: post_xlf.header[2]['value'],
+                                delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
+                                order_no:   post_xlf.header[0]['value']
+                            });
+    
+                            //  check existing order no
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
+                                    values:[form_details_obj[0].order_no]
+                                },  function(err, results, fields){
+    
+                                    //  if not undefined resolve the form details obj
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null){
+                                                                            
+                                        res.send(JSON.stringify('Invoice already exist'));
+    
+                                    } else {
+    
+                                        //  resolve
+                                        resolve(form_details_obj);
+                                        //console.log(form_details_obj);
+                                    }
+    
+                                });
+                            connection.release();
+                            });
+                        } else {    // if there's null in the form.. who knows,
+                            res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
+                        }
+                    });
+                }
+
+                function coaACHL(){
+                    return new Promise(function(resolve, reject){
+
+                        let coaACHL_obj = [];
+
+                        for(let i=27; i < post_xlf.xlf['COA'].length; i++){
                             
-                            res.send(JSON.stringify({success: 'Please wait while we\'re uploading it to database. This might take for a while.'}));
+                            coaACHL_obj.push({
+                                ingot_lot_id: post_xlf.xlf['COA'][i][1],
+                                pieces: post_xlf.xlf['COA'][i][2],
+                                block_length: post_xlf.xlf['COA'][i][3],
+                                totalCystal_length: post_xlf.xlf['COA'][i][4],
+                                seedBlock: post_xlf.xlf['COA'][i][5],
+                                location: post_xlf.xlf['COA'][i][6],
+                                distance: post_xlf.xlf['COA'][i][7],
+                                LT_top: post_xlf.xlf['COA'][i][8],
+                                LT_tail: post_xlf.xlf['COA'][i][9],
+                                Resist_top: post_xlf.xlf['COA'][i][10],
+                                Resist_tail: post_xlf.xlf['COA'][i][11],
+                                Oi_top: post_xlf.xlf['COA'][i][12],
+                                Oi_tail: post_xlf.xlf['COA'][i][13],
+                                Cs_top: post_xlf.xlf['COA'][i][14],
+                                Cs_tail: post_xlf.xlf['COA'][i][15],
+                                Angle: post_xlf.xlf['COA'][i][16],
+                                Dia_ave: post_xlf.xlf['COA'][i][17],
+                                Dia_std: post_xlf.xlf['COA'][i][18],
+                                Flat_X_length_ave: post_xlf.xlf['COA'][i][19],
+                                Flat_X_length_std: post_xlf.xlf['COA'][i][20],
+                                Flat_Y_lenght_ave: post_xlf.xlf['COA'][i][21],
+                                Flat_Y_length_std: post_xlf.xlf['COA'][i][22],
+                                Flat_taper_length_ave: post_xlf.xlf['COA'][i][23],
+                                Flat_taper_length_std: post_xlf.xlf['COA'][i][24],
+                                Corner_length_ave: post_xlf.xlf['COA'][i][25],
+                                Corner_length_std: post_xlf.xlf['COA'][i][26],
+                                Thickness_ave: post_xlf.xlf['COA'][i][27],
+                                Thickness_std: post_xlf.xlf['COA'][i][28],
+                                TTV: post_xlf.xlf['COA'][i][29],
+                                RZ: post_xlf.xlf['COA'][i][30],
+                                Copper_content: post_xlf.xlf['COA'][i][31],
+                                Iron_content: post_xlf.xlf['COA'][i][32],
+                                AcceptReject: post_xlf.xlf['COA'][i][33]
+                            });
+
+                        }
+
+                        resolve(coaACHL_obj);
+
+                    });
+                }
+
+                function ingotACHL(){
+                    return new Promise(function(resolve, reject){
+
+                        let ingotACHL_obj = [];
+
+                        for(let i=0; i < post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'].length; i++){
+
+                            ingotACHL_obj.push({
+                                pallet_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0],
+                                carton_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][1],
+                                lot_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][2],
+                                ausp_box_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][3],
+                                qty: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][4]
+                            });
+                            
+                        }
+
+                        resolve(ingotACHL_obj);
+
+                    });
+                }
+
+                checkName().then(function(user_details){
+                    return form_details().then(function(form_details_obj){
+                        return coaACHL().then(function(coaACHL_obj){
+                            return ingotACHL().then(function(ingotACHL_obj){
+
+                                for(let i = 0; i<coaACHL_obj.length;i++){
+                                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                        if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
+                                        
+                                        if(connection){
+                                            connection.query({
+                                                sql: 'INSERT INTO tbl_achl_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, pieces=?, block_length=?, totalCrystal_length=?, seedBlock=?, location=?, distance=?, LT_top=?, LT_tail=?, Resist_top=?, Resist_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Angle=?, Dia_ave=?, Dia_std=?, Flat_X_length_ave=?, Flat_X_length_std=?, Flat_Y_length_ave=?, Flat_Y_length_std=?, Flat_taper_length_ave=?, Flat_taper_length_std=?, Corner_length_ave=?, Corner_length_std=?, Thickness_ave=?, Thickness_std=?, TTV=?, RZ=?, Copper_content=?, Iron_content=?, AcceptReject=?',
+                                                values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaACHL_obj[i].ingot_lot_id, coaACHL_obj[i].pieces,  coaACHL_obj[i].block_length, coaACHL_obj[i].totalCrystal_length, coaACHL_obj[i].seedBlock, coaACHL_obj[i].location, coaACHL_obj[i].distance, coaACHL_obj[i].LT_top, coaACHL_obj[i].LT_tail, coaACHL_obj[i].Resist_top, coaACHL_obj[i].Resist_tail, coaACHL_obj[i].Oi_top, coaACHL_obj[i].Oi_tail, coaACHL_obj[i].Cs_top, coaACHL_obj[i].Cs_tail, coaACHL_obj[i].Angle, coaACHL_obj[i].Dia_ave, coaACHL_obj[i].Dia_std, coaACHL_obj[i].Flat_X_length_ave, coaACHL_obj[i].Flat_X_length_std, coaACHL_obj[i].Flat_Y_length_ave, coaACHL_obj[i].Flat_Y_length_std, coaACHL_obj[i].Flat_taper_length_ave, coaACHL_obj[i].Flat_taper_length_std, coaACHL_obj[i].Corner_length_ave, coaACHL_obj[i].Corner_length_std, coaACHL_obj[i].Thickness_ave, coaACHL_obj[i].Thickness_std, coaACHL_obj[i].TTV, coaACHL_obj[i].RZ, coaACHL_obj[i].Copper_content, coaACHL_obj[i].Iron_content, coaACHL_obj[i].AcceptReject]
+                                            },  function(err, results, fields){
+                                               // console.log(results);
+                                            });
+
+                                            connection.release();
+                                        } else {
+                                            res.send(JSON.stringify('Connection undefined. @ ACHL'));
+                                        }
+
+                                    });
+                                }
+                                
+                                for(let i = 1; i<ingotACHL_obj.length;i++){
+                                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                        if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
+                                        
+                                        if(connection){
+                                            connection.query({
+                                                sql: 'INSERT INTO tbl_achl_ingot SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, pallet_id=?, carton_id=?, lot_id=?, ausp_box_id=?, qty=?',
+                                                values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, ingotACHL_obj[i].pallet_id, ingotACHL_obj[i].carton_id, ingotACHL_obj[i].lot_id, ingotACHL_obj[i].ausp_box_id, ingotACHL_obj[i].qty]
+                                            },  function(err, results, fields){
+
+                                            });
+                                            connection.release();
+                                        }
+                                    });
+                                }
+
+                                res.send(JSON.stringify({success: 'Please wait while we upload ACHL CoA. Do not Close or Refresh this window.'}));
+
+                            });
                         });
                     });
-                });    
-            });
+                });
+
+            }
+
+        } else if(post_xlf.header[2]['value'] == '1003'){ // FERROTEC
+
+            if(!post_xlf.xlf['Ingot Lot Barcodes']){
+                res.send(JSON.stringify('Invalid FERROTEC CoA File.'));
+            } else {
+
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                            connection.release();
+                        });
+    
+                    });
+                }
+    
+                function form_details(){ // promise function for header
+                    return new Promise(function(resolve, reject){
+    
+                        //  make sure no null here
+                        if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
+    
+                            let form_details_obj = [];
+                            let dDate = post_xlf.header[1]['value'];
+    
+                            //  [0] - order no
+                            //  [1] - delivery date
+                            //  [2] - supplier id
+                            form_details_obj.push({
+                                supplier_id: post_xlf.header[2]['value'],
+                                delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
+                                order_no:   post_xlf.header[0]['value']
+                            });
+    
+                            //  check existing order no
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
+                                    values:[form_details_obj[0].order_no]
+                                },  function(err, results, fields){
+    
+                                    //  if not undefined resolve the form details obj
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null){
+                                                                            
+                                        res.send(JSON.stringify('Invoice already exist'));
+    
+                                    } else {
+    
+                                        //  resolve
+                                        resolve(form_details_obj);
+                                        //console.log(form_details_obj);
+                                    }
+    
+                                });
+                            connection.release();
+                            });
+                        } else {    // if there's null in the form.. who knows,
+                            res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
+                        }
+                    });
+                }
+            }
+
+        } else if(post_xlf.header[2]['value'] == '1004'){ // NORSUN
+
+            if(!post_xlf.xlf['CofA']){
+                res.send(JSON.stringify('Invalid NORSUN CoA file.'));
+            } else {
+
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                            connection.release();
+                        });
+    
+                    });
+                }
+    
+                function form_details(){ // promise function for header
+                    return new Promise(function(resolve, reject){
+    
+                        //  make sure no null here
+                        if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
+    
+                            let form_details_obj = [];
+                            let dDate = post_xlf.header[1]['value'];
+    
+                            //  [0] - order no
+                            //  [1] - delivery date
+                            //  [2] - supplier id
+                            form_details_obj.push({
+                                supplier_id: post_xlf.header[2]['value'],
+                                delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
+                                order_no:   post_xlf.header[0]['value']
+                            });
+    
+                            //  check existing order no
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
+                                    values:[form_details_obj[0].order_no]
+                                },  function(err, results, fields){
+    
+                                    //  if not undefined resolve the form details obj
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null){
+                                                                            
+                                        res.send(JSON.stringify('Invoice already exist'));
+    
+                                    } else {
+    
+                                        //  resolve
+                                        resolve(form_details_obj);
+                                        //console.log(form_details_obj);
+                                    }
+    
+                                });
+                            connection.release();
+                            });
+                        } else {    // if there's null in the form.. who knows,
+                            res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
+                        }
+                    });
+                }
+
+            }
+
+        } else if(post_xlf.header[2]['value'] == '1005'){ // ACMK
             
+            res.send(JSON.stringify('No parser for ACMK as of the moment.'));
+        } else if(post_xlf.header[2]['value'] == '1006'){ // LONGI
+
+            res.send(JSON.stringify('No parser for LONGI as of the moment.'));
         }
+        
         
     }); 
 
@@ -909,12 +1330,13 @@ module.exports = function(app){
             function uploadHistory(){
                 return new Promise(function(resolve, reject){
                         connection.query({
-                            sql: 'SELECT id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no ORDER BY id DESC'
+                            sql: 'SELECT B.supplier_name, A.order_no, A.username, A.upload_time FROM (SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_achl_ingot GROUP BY order_no ) A JOIN (SELECT supplier_id, supplier_name FROM tbl_supplier_list) B ON A.supplier_id = B.supplier_id ORDER BY A.upload_time DESC'
                         }, function(err, results, fields){
                             let uploaded_history = [];
                                 for(let i=0; i<results.length;i++){
                                     uploaded_history.push({
                                         uploaded_history_id: results[i].id,
+                                        uploaded_history_supplier_name: results[i].supplier_name,
                                         uploaded_history_date: results[i].upload_time,
                                         uploaded_history_order_no: results[i].order_no,
                                         uploaded_history_username: results[i].username

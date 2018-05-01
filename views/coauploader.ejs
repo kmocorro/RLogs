@@ -219,20 +219,22 @@
                                         <input type="text" class="form-control" id="order_no" name="order_no" placeholder="Invoice number"  data-validation="length alphanumeric" data-validation-length="min4"/>
                                     </div>
 
-                                    <small>Delivery date:</small>
-                                    <div class='input-group date' name='datetimepicker1' id='datetimepicker1' style="padding-bottom:15px;">
-
-                                        <input type='text' class="form-control" id="delivery_date" name="delivery_date" placeholder="Delivery date"/>
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                        <script type="text/javascript">
-                                            $(function () {
-                                                $('#datetimepicker1').datetimepicker();
-                                            });
-                                        </script>
+                                    <div class="delivery_date_div">
+                                        <small>Delivery date:</small>
+                                        <div class='input-group date' name='datetimepicker1' id='datetimepicker1' style="padding-bottom:15px;">
+                                            <input type='text' class="form-control" id="delivery_date" name="delivery_date" placeholder="Delivery date"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                            <script type="text/javascript">
+                                                $(function () {
+                                                    $('#datetimepicker1').datetimepicker();
+                                                });
+                                            </script>
+                                        </div>
                                     </div>
-                                    <div class="supplier_id" class="supplier_id" id="supplier_id" name="supplier_id" style="padding-bottom:1px;">
+
+                                    <div class="supplier_id_div" class="supplier_id" id="supplier_id" name="supplier_id" style="padding-bottom:1px;">
                                         <!--use ejs here from supplier list table for select input-->
                                         <small>Supplier ID:</small>
                                         <select class="form-control" id="supplier_id" name="supplier_id">
@@ -260,43 +262,6 @@
                     <!-- /.box-footer-->
                 </div>
 
-                <div class="box box-warning" style="height: 100%;">
-                  <div class="box-header with-border">
-                    <h3 class="box-title" style="padding-bottom:12px;">Upload History</h3>
-
-                    <div class="box-tools pull-right">
-                      <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                      <i class="fa fa-minus"></i></button>
-                    </div>
-                  </div>
-
-                  <!-- /.box-header -->
-                  <div class="box-body table-responsive ">
-                    <table id="upload" class="table table-hover">
-                      <thead>
-                        <tr>
-                        <th>Upload Date</th>
-                        <th>Invoice</th>
-                        <th>User</th>
-                        </tr>
-                      </thead>
-                      <% for (let i=0; i < uploaded_history.length; i++) {  %>
-                        <tr>
-                        <td><%= uploaded_history[i].uploaded_history_date %></td>
-                        <td><span class="label label-success"><%= uploaded_history[i].uploaded_history_order_no %></span></td>
-                        <td><%= uploaded_history[i].uploaded_history_username %></td>
-                        </tr>
-                      <% } %>
-                    </table>
-                  <ul id="logs"></ul>
-                  </div>
-                  
-                  <!-- /.box-body -->
-                  <div class="box-footer">
-                      <small style="float:right"><i></i></small>
-                  </div>
-                </div>
-                  <!-- /.box-footer-->
             </div>
 
             <!-- Log Box-->
@@ -349,9 +314,49 @@
         </div>
 
         <div class="row">
-          
+            <div class="col-md-12">
+                <div class="box box-default" style="height: 100%;">
+                    <div class="box-header with-border">
+                        <h3 class="box-title" style="padding-bottom:12px;">Upload History</h3>
+
+                        <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                        </div>
+
+                    </div>
+                    <!-- /.box-header -->
+
+                    <div class="box-body table-responsive ">
+                        <table id="upload" class="table table-hover">
+                        <thead>
+                            <tr>
+                            <th>Upload Date</th>
+                            <th>Supplier</th>
+                            <th>Invoice</th>
+                            <th>User</th>
+                            </tr>
+                        </thead>
+                        <% for (let i=0; i < uploaded_history.length; i++) {  %>
+                            <tr>
+                            <td><%= uploaded_history[i].uploaded_history_date %></td>
+                            <td><%= uploaded_history[i].uploaded_history_supplier_name %></td>
+                            <td><span class="label label-success"><%= uploaded_history[i].uploaded_history_order_no %></span></td>
+                            <td><%= uploaded_history[i].uploaded_history_username %></td>
+                            </tr>
+                        <% } %>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <small style="float:right"><i></i></small>
+                    </div>
+                </div>
+                <!-- /.box-footer-->
+            </div>
+            
+
         </div>
-        
         <!-- /.box -->
   
     </section>

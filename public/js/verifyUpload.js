@@ -1,4 +1,8 @@
 $('document').ready(function(){
+    
+    $('.order_no_div').show();
+    $('.delivery_date_div').show();
+    $('.supplier_id_div').show();
 
     /* validation */
     $('#upload_form').validate({
@@ -76,12 +80,17 @@ $('document').ready(function(){
                     $("#error").fadeIn(0, function(){						
                         $("#error").html('<div class="alert alert-warning">'+response.success+'</div>');
                     });
+                    
+                    $('.order_no_div').hide();
+                    $('.delivery_date_div').hide();
+                    $('.supplier_id_div').hide();
+
                     $("#btn-upload").html('Please wait...');
 
                     window.location.reload(true);
                     
                 } else {
-                    $("#error").fadeIn(1000, function(){						
+                    $("#error").fadeIn(0, function(){						
                         $("#error").html('<div class="alert alert-danger">'+response+'</div>'); 
                         $("#btn-upload").prop("disabled",false);
                         $("#xlf").prop("disabled",false);
