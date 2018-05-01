@@ -1059,7 +1059,7 @@ module.exports = function(app){
 
         } else if(post_xlf.header[2]['value'] == '1003'){ // FERROTEC
 
-            if(!post_xlf.xlf['Ingot Lot Barcodes']){
+            if(!post_xlf.xlf['COA']){
                 res.send(JSON.stringify('Invalid FERROTEC CoA File.'));
             } else {
 
