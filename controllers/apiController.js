@@ -836,7 +836,7 @@ module.exports = function(app){
                                     }
                                 }
                                 
-                                res.send(JSON.stringify({success: 'Please wait while we\'re uploading it to database. Do not Close or Refresh this window.'}));
+                                res.send(JSON.stringify({success: 'Uploading... Be patient. Larger file will need more time to build. Do not refresh.'}));
                             });
                         });
                     });    
@@ -1048,7 +1048,7 @@ module.exports = function(app){
                                     });
                                 }
 
-                                res.send(JSON.stringify({success: 'Please wait while we upload ACHL CoA. Do not Close or Refresh this window.'}));
+                                res.send(JSON.stringify({success: 'Uploading... Be patient. Larger file will need more time to build. Do not refresh.'}));
 
                             });
                         });

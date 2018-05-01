@@ -3,6 +3,7 @@ $('document').ready(function(){
     $('.order_no_div').show();
     $('.delivery_date_div').show();
     $('.supplier_id_div').show();
+    $("#btn-upload").show();
 
     /* validation */
     $('#upload_form').validate({
@@ -77,15 +78,17 @@ $('document').ready(function(){
                     $("#btn-upload").prop("disabled",true);
                     $("#xlf").prop("disabled",true);
 
-                    $("#error").fadeIn(0, function(){						
+                    $("#error").fadeIn(1000, function(){						
                         $("#error").html('<div class="alert alert-warning">'+response.success+'</div>');
+                        $(".loading").html("<img src='../style/dug.gif' alt='loading...' style='display: block;margin-left: auto;margin-right: auto;'/>");
                     });
                     
                     $('.order_no_div').hide();
                     $('.delivery_date_div').hide();
                     $('.supplier_id_div').hide();
-
-                    $("#btn-upload").html('Please wait...');
+                    $("#btn-upload").hide();
+                    
+                    
 
                     window.location.reload(true);
                     

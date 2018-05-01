@@ -44,7 +44,7 @@
 
 </head>
 
-<body class="sidebar-mini skin-black-light sidebar">
+<body class="sidebar-mini skin-black sidebar">
 
 <div class="wrapper">
  <header class="main-header">
@@ -213,6 +213,10 @@
                             <div class="box-body">
                                     <div class="header_div" style="padding-bottom:10px;padding-top:10px;">
                                     
+                                    <div class="loading" style="margin: auto;">
+
+                                    </div>
+                                    
                                     <div class="order_no_div" style="padding-bottom:15px;">
                                         <!--onkeypress='return event.charCode >= 48 && event.charCode <= 57'-->
                                         <small>Invoice number:</small>
@@ -247,8 +251,8 @@
                                     </div>
                                 </div>
 
-                                <div class="submit_div" style="padding-bottom: 5px;">
-                                    <button id="btn-upload" class="btn btn-lg btn-warning btn-block" name="Submit" type="Submit" value="Upload" disabled>Upload</button>
+                                <div class="submit_div" style="padding-bottom: 0px;">
+                                    <button id="btn-upload" class="btn btn-lg btn-primary btn-block" name="Submit" type="Submit" value="Upload" disabled>Upload</button>
                                 </div>
 
                             </div>
@@ -257,7 +261,7 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
-                        <small style="float:right"><i>All details are required.</i></small>
+                        <small style="float:right"><i>All fields are required.</i></small>
                     </div>
                     <!-- /.box-footer-->
                 </div>
@@ -266,7 +270,47 @@
 
             <!-- Log Box-->
             <div class="col-md-8">
-              <div class="box box-default" style="height: 100%;">
+                <div class="box box-default" style="height: 100%;">
+                    <div class="box-header with-border">
+                        <h3 class="box-title" style="padding-bottom:12px;">Upload History</h3>
+
+                        <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                        </div>
+
+                    </div>
+                    <!-- /.box-header -->
+
+                    <div class="box-body table-responsive ">
+                        <table id="upload" class="table table-hover">
+                        <thead>
+                            <tr>
+                            <th>Upload Date</th>
+                            <th>Supplier</th>
+                            <th>Invoice</th>
+                            <th>User</th>
+                            </tr>
+                        </thead>
+                        <% for (let i=0; i < uploaded_history.length; i++) {  %>
+                            <tr>
+                            <td><%= uploaded_history[i].uploaded_history_date %></td>
+                            <td><%= uploaded_history[i].uploaded_history_supplier_name %></td>
+                            <td><span class="label label-success"><%= uploaded_history[i].uploaded_history_order_no %></span></td>
+                            <td><%= uploaded_history[i].uploaded_history_username %></td>
+                            </tr>
+                        <% } %>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <small style="float:right"><i>Hey,</i></small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8 pull-right">
+                <div class="box box-default" style="height: 100%;">
                     <div class="box-header with-border">
                         <h3 class="box-title" style="padding-bottom:12px;">Consumed Stack IDs</h3>
             
@@ -308,55 +352,14 @@
                         <small style="float:right"><i></i></small>
                     </div>
                     <!-- /.box-footer-->
-              </div>
-            </div>
-            
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="box box-default" style="height: 100%;">
-                    <div class="box-header with-border">
-                        <h3 class="box-title" style="padding-bottom:12px;">Upload History</h3>
-
-                        <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                        <i class="fa fa-minus"></i></button>
-                        </div>
-
-                    </div>
-                    <!-- /.box-header -->
-
-                    <div class="box-body table-responsive ">
-                        <table id="upload" class="table table-hover">
-                        <thead>
-                            <tr>
-                            <th>Upload Date</th>
-                            <th>Supplier</th>
-                            <th>Invoice</th>
-                            <th>User</th>
-                            </tr>
-                        </thead>
-                        <% for (let i=0; i < uploaded_history.length; i++) {  %>
-                            <tr>
-                            <td><%= uploaded_history[i].uploaded_history_date %></td>
-                            <td><%= uploaded_history[i].uploaded_history_supplier_name %></td>
-                            <td><span class="label label-success"><%= uploaded_history[i].uploaded_history_order_no %></span></td>
-                            <td><%= uploaded_history[i].uploaded_history_username %></td>
-                            </tr>
-                        <% } %>
-                        </table>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                        <small style="float:right"><i></i></small>
-                    </div>
                 </div>
                 <!-- /.box-footer-->
             </div>
-            
-
         </div>
+
+        <!--<div class="row">-->
+            
+        <!--</div>-->
         <!-- /.box -->
   
     </section>
@@ -701,7 +704,7 @@
       'searching'   : true,
       'ordering'    : true,
       'info'        : true,
-      'autoWidth'   : false
+      'autoWidth'   : false,
     });
   });
 </script>
@@ -716,7 +719,8 @@
       'searching'   : false,
       'ordering'    : true,
       'info'        : true,
-      'autoWidth'   : false
+      'autoWidth'   : false,
+      'pageLength'  : 4
     });
   });
 </script>
