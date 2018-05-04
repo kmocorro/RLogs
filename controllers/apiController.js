@@ -836,7 +836,7 @@ module.exports = function(app){
                                     }
                                 }
                                 
-                                res.send(JSON.stringify({success: 'Uploading... Be patient. Larger file will need more time to build. Do not refresh.'}));
+                                res.send(JSON.stringify({success: 'Uploading... Be patient. Large files need more time to build. Do not refresh.'}));
                             });
                         });
                     });    
@@ -940,43 +940,46 @@ module.exports = function(app){
 
                         let coaACHL_obj = [];
 
-                        for(let i=27; i < post_xlf.xlf['COA'].length; i++){
-                            
-                            coaACHL_obj.push({
-                                ingot_lot_id: post_xlf.xlf['COA'][i][1],
-                                pieces: post_xlf.xlf['COA'][i][2],
-                                block_length: post_xlf.xlf['COA'][i][3],
-                                totalCystal_length: post_xlf.xlf['COA'][i][4],
-                                seedBlock: post_xlf.xlf['COA'][i][5],
-                                location: post_xlf.xlf['COA'][i][6],
-                                distance: post_xlf.xlf['COA'][i][7],
-                                LT_top: post_xlf.xlf['COA'][i][8],
-                                LT_tail: post_xlf.xlf['COA'][i][9],
-                                Resist_top: post_xlf.xlf['COA'][i][10],
-                                Resist_tail: post_xlf.xlf['COA'][i][11],
-                                Oi_top: post_xlf.xlf['COA'][i][12],
-                                Oi_tail: post_xlf.xlf['COA'][i][13],
-                                Cs_top: post_xlf.xlf['COA'][i][14],
-                                Cs_tail: post_xlf.xlf['COA'][i][15],
-                                Angle: post_xlf.xlf['COA'][i][16],
-                                Dia_ave: post_xlf.xlf['COA'][i][17],
-                                Dia_std: post_xlf.xlf['COA'][i][18],
-                                Flat_X_length_ave: post_xlf.xlf['COA'][i][19],
-                                Flat_X_length_std: post_xlf.xlf['COA'][i][20],
-                                Flat_Y_lenght_ave: post_xlf.xlf['COA'][i][21],
-                                Flat_Y_length_std: post_xlf.xlf['COA'][i][22],
-                                Flat_taper_length_ave: post_xlf.xlf['COA'][i][23],
-                                Flat_taper_length_std: post_xlf.xlf['COA'][i][24],
-                                Corner_length_ave: post_xlf.xlf['COA'][i][25],
-                                Corner_length_std: post_xlf.xlf['COA'][i][26],
-                                Thickness_ave: post_xlf.xlf['COA'][i][27],
-                                Thickness_std: post_xlf.xlf['COA'][i][28],
-                                TTV: post_xlf.xlf['COA'][i][29],
-                                RZ: post_xlf.xlf['COA'][i][30],
-                                Copper_content: post_xlf.xlf['COA'][i][31],
-                                Iron_content: post_xlf.xlf['COA'][i][32],
-                                AcceptReject: post_xlf.xlf['COA'][i][33]
-                            });
+                        for(let i=26; i < post_xlf.xlf['COA'].length; i++){
+                            if(post_xlf.xlf['COA'][i][1] != null && post_xlf.xlf['COA'][i][2] != null ){
+                                
+                                coaACHL_obj.push({
+                                    ingot_lot_id: post_xlf.xlf['COA'][i][1],
+                                    pieces: post_xlf.xlf['COA'][i][2],
+                                    block_length: post_xlf.xlf['COA'][i][3],
+                                    totalCystal_length: post_xlf.xlf['COA'][i][4],
+                                    seedBlock: post_xlf.xlf['COA'][i][5],
+                                    location: post_xlf.xlf['COA'][i][6],
+                                    distance: post_xlf.xlf['COA'][i][7],
+                                    LT_top: post_xlf.xlf['COA'][i][8],
+                                    LT_tail: post_xlf.xlf['COA'][i][9],
+                                    Resist_top: post_xlf.xlf['COA'][i][10],
+                                    Resist_tail: post_xlf.xlf['COA'][i][11],
+                                    Oi_top: post_xlf.xlf['COA'][i][12],
+                                    Oi_tail: post_xlf.xlf['COA'][i][13],
+                                    Cs_top: post_xlf.xlf['COA'][i][14],
+                                    Cs_tail: post_xlf.xlf['COA'][i][15],
+                                    Angle: post_xlf.xlf['COA'][i][16],
+                                    Dia_ave: post_xlf.xlf['COA'][i][17],
+                                    Dia_std: post_xlf.xlf['COA'][i][18],
+                                    Flat_X_length_ave: post_xlf.xlf['COA'][i][19],
+                                    Flat_X_length_std: post_xlf.xlf['COA'][i][20],
+                                    Flat_Y_lenght_ave: post_xlf.xlf['COA'][i][21],
+                                    Flat_Y_length_std: post_xlf.xlf['COA'][i][22],
+                                    Flat_taper_length_ave: post_xlf.xlf['COA'][i][23],
+                                    Flat_taper_length_std: post_xlf.xlf['COA'][i][24],
+                                    Corner_length_ave: post_xlf.xlf['COA'][i][25],
+                                    Corner_length_std: post_xlf.xlf['COA'][i][26],
+                                    Thickness_ave: post_xlf.xlf['COA'][i][27],
+                                    Thickness_std: post_xlf.xlf['COA'][i][28],
+                                    TTV: post_xlf.xlf['COA'][i][29],
+                                    RZ: post_xlf.xlf['COA'][i][30],
+                                    Copper_content: post_xlf.xlf['COA'][i][31],
+                                    Iron_content: post_xlf.xlf['COA'][i][32],
+                                    AcceptReject: post_xlf.xlf['COA'][i][33]
+                                });
+
+                            }
 
                         }
 
@@ -991,14 +994,17 @@ module.exports = function(app){
                         let ingotACHL_obj = [];
 
                         for(let i=0; i < post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'].length; i++){
+                            if(post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0] !== null){
+                                
+                                ingotACHL_obj.push({
+                                    pallet_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0],
+                                    carton_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][1],
+                                    lot_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][2],
+                                    ausp_box_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][3],
+                                    qty: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][4]
+                                });
+                            }
 
-                            ingotACHL_obj.push({
-                                pallet_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0],
-                                carton_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][1],
-                                lot_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][2],
-                                ausp_box_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][3],
-                                qty: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][4]
-                            });
                             
                         }
 
@@ -1007,6 +1013,7 @@ module.exports = function(app){
                     });
                 }
 
+                
                 checkName().then(function(user_details){
                     return form_details().then(function(form_details_obj){
                         return coaACHL().then(function(coaACHL_obj){
@@ -1025,8 +1032,6 @@ module.exports = function(app){
                                             });
 
                                             connection.release();
-                                        } else {
-                                            res.send(JSON.stringify('Connection undefined. @ ACHL'));
                                         }
 
                                     });
@@ -1048,13 +1053,13 @@ module.exports = function(app){
                                     });
                                 }
 
-                                res.send(JSON.stringify({success: 'Uploading... Be patient. Larger file will need more time to build. Do not refresh.'}));
+                                res.send(JSON.stringify({success: 'Uploading... Be patient. Large files need more time to build. Do not refresh.'}));
 
                             });
                         });
                     });
                 });
-
+                
             }
 
         } else if(post_xlf.header[2]['value'] == '1003'){ // FERROTEC
@@ -1147,6 +1152,151 @@ module.exports = function(app){
                         }
                     });
                 }
+
+                function coaFERROTEC(){
+                    return new Promise(function(resolve, reject){
+
+                        let coaFERROTEC_obj = [];
+                        
+                        for(let i=7; i < post_xlf.xlf['COA'].length; i++){
+                            if(post_xlf.xlf['COA'][i][0] != '' && post_xlf.xlf['COA'][i][1] != null){
+
+                                coaFERROTEC_obj.push({
+                                    ingot_lot_id: post_xlf.xlf['COA'][i][0],
+                                    sunpower_lot_id: post_xlf.xlf['COA'][i][1],
+                                    box_no: post_xlf.xlf['COA'][i][2],
+                                    wafer_qty: post_xlf.xlf['COA'][i][3],
+                                    wafer_qty_difference: post_xlf.xlf['COA'][i][4],
+                                    block_length: post_xlf.xlf['COA'][i][5],
+                                    totalCystal_length: post_xlf.xlf['COA'][i][6],
+                                    seedBlock: post_xlf.xlf['COA'][i][7],
+                                    MCLT_top: post_xlf.xlf['COA'][i][8],
+                                    MCLT_tail: post_xlf.xlf['COA'][i][9],
+                                    Res_top: post_xlf.xlf['COA'][i][10],
+                                    Res_tail: post_xlf.xlf['COA'][i][11],
+                                    Oi_top: post_xlf.xlf['COA'][i][12],
+                                    Oi_tail: post_xlf.xlf['COA'][i][13],
+                                    Cs_top: post_xlf.xlf['COA'][i][14],
+                                    Cs_tail: post_xlf.xlf['COA'][i][15],
+                                    Dia_ave: post_xlf.xlf['COA'][i][16],
+                                    Dia_std: post_xlf.xlf['COA'][i][17],
+                                    Dia_min: post_xlf.xlf['COA'][i][18],
+                                    Dia_max: post_xlf.xlf['COA'][i][19],
+                                    Flat_ave: post_xlf.xlf['COA'][i][20],
+                                    Flat_std: post_xlf.xlf['COA'][i][21],
+                                    Flat_min: post_xlf.xlf['COA'][i][22],
+                                    Flat_max: post_xlf.xlf['COA'][i][23],
+                                    Flat_taper_ave: post_xlf.xlf['COA'][i][24],
+                                    Flat_taper_std: post_xlf.xlf['COA'][i][25],
+                                    Flat_taper_min: post_xlf.xlf['COA'][i][26],
+                                    Flat_taper_max: post_xlf.xlf['COA'][i][27],
+                                    Corner_ave: post_xlf.xlf['COA'][i][28],
+                                    Corner_std: post_xlf.xlf['COA'][i][29],
+                                    Corner_min: post_xlf.xlf['COA'][i][30],
+                                    Corner_max: post_xlf.xlf['COA'][i][31],
+                                    Thickness_ave: post_xlf.xlf['COA'][i][32],
+                                    Thickness_std: post_xlf.xlf['COA'][i][33],
+                                    Thickness_min: post_xlf.xlf['COA'][i][34],
+                                    Thickness_max: post_xlf.xlf['COA'][i][35],
+                                    TTV_ave: post_xlf.xlf['COA'][i][36],
+                                    TTV_std: post_xlf.xlf['COA'][i][37],
+                                    TTV_min: post_xlf.xlf['COA'][i][38],
+                                    TTV_max: post_xlf.xlf['COA'][i][39],
+                                    RA_ave: post_xlf.xlf['COA'][i][40],
+                                    RA_std: post_xlf.xlf['COA'][i][41],
+                                    RA_min: post_xlf.xlf['COA'][i][42],
+                                    RA_max: post_xlf.xlf['COA'][i][43],
+                                    RZ_ave: post_xlf.xlf['COA'][i][44],
+                                    RZ_std: post_xlf.xlf['COA'][i][45],
+                                    RZ_min: post_xlf.xlf['COA'][i][46],
+                                    RZ_max: post_xlf.xlf['COA'][i][47],
+                                    Vertical_ave: post_xlf.xlf['COA'][i][48],
+                                    Vertical_std: post_xlf.xlf['COA'][i][49],
+                                    Vertical_min: post_xlf.xlf['COA'][i][50],
+                                    Vertical_max: post_xlf.xlf['COA'][i][51],
+                                    Copper_content: post_xlf.xlf['COA'][i][52],
+                                    Iron_content: post_xlf.xlf['COA'][i][53],
+                                    AcceptReject: post_xlf.xlf['COA'][i][54]
+                                });
+                            }
+                        }
+
+                        resolve(coaFERROTEC_obj);
+
+                    });
+                }
+
+                function ingotFERROTEC(){
+                    return new Promise(function(resolve, reject){
+
+                        let ingotFERROTEC_obj = [];
+
+                        for(let i = 1; i < post_xlf.xlf['Ingot Lot Barcodes'].length; i++){
+
+                            if(post_xlf.xlf['Ingot Lot Barcodes'][i][0] !== null){
+                                    
+                                //  loop per row
+                                for(let j=1;j<post_xlf.xlf['Ingot Lot Barcodes'][i].length;j++){
+                                    ingotFERROTEC_obj.push({
+                                        ingot_lot_id:   post_xlf.xlf['Ingot Lot Barcodes'][i][0],
+                                        bundle_barcode:  post_xlf.xlf['Ingot Lot Barcodes'][i][j]
+                                    });
+                                }
+
+                            } 
+
+                        }
+
+                        resolve(ingotFERROTEC_obj);
+                    });
+                }
+
+                checkName().then(function(user_details){
+                    return form_details().then(function(form_details_obj){
+                        return coaFERROTEC().then(function(coaFERROTEC_obj){
+                            return ingotFERROTEC().then(function(ingotFERROTEC_obj){
+
+                                for(let i=0;i<coaFERROTEC_obj.length;i++){ // coa
+                                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                                        if(connection){
+
+                                            connection.query({
+                                                sql: 'INSERT INTO tbl_ferrotec_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, sunpower_lot_id=?, box_no=?, wafer_qty=?, wafer_qty_difference=?, block_length=?, totalCrystal=?, seedBlock=?, MCLT_top=?, MCLT_tail=?, Res_top=?, Res_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Dia_ave=?, Dia_std=?, Dia_min=?, Dia_max=?, Flat_ave=?, Flat_std=?, Flat_min=?, Flat_max=?, Flat_taper_ave=?, Flat_taper_std=?, Flat_taper_min=?, Flat_taper_max=?, Corner_ave=?, Corner_std=?, Corner_min=?, Corner_max=?, Thickness_ave=?, Thickness_std=?, Thickness_min=?, Thickness_max=?, TTV_ave=?, TTV_std=?, TTV_min=?, TTV_max=?, RA_ave=?, RA_std=?, RA_min=?, RA_max=?, RZ_ave=?, RZ_std=?, RZ_min=?, RZ_max=?, Vertical_ave=?, Vertical_std=?, Vertical_min=?, Vertical_max=?, Copper_content=?, Iron_content=?, AcceptReject=?',
+                                                values:[form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaFERROTEC_obj[i].ingot_lot_id, coaFERROTEC_obj[i].sunpower_lot_id, coaFERROTEC_obj[i].box_no, coaFERROTEC_obj[i].wafer_qty, coaFERROTEC_obj[i].wafer_qty_difference, coaFERROTEC_obj[i].block_length, coaFERROTEC_obj[i].totalCrystal, coaFERROTEC_obj[i].seedBlock, coaFERROTEC_obj[i].MCLT_top, coaFERROTEC_obj[i].MCLT_tail, coaFERROTEC_obj[i].Res_top, coaFERROTEC_obj[i].Res_tail, coaFERROTEC_obj[i].Oi_top, coaFERROTEC_obj[i].Oi_tail, coaFERROTEC_obj[i].Cs_top, coaFERROTEC_obj[i].Cs_tail, coaFERROTEC_obj[i].Dia_ave, coaFERROTEC_obj[i].Dia_std, coaFERROTEC_obj[i].Dia_min, coaFERROTEC_obj[i].Dia_max, coaFERROTEC_obj[i].Flat_ave, coaFERROTEC_obj[i].Flat_std, coaFERROTEC_obj[i].Flat_min, coaFERROTEC_obj[i].Flat_max, coaFERROTEC_obj[i].Flat_taper_ave, coaFERROTEC_obj[i].Flat_taper_std, coaFERROTEC_obj[i].Flat_taper_min, coaFERROTEC_obj[i].Flat_taper_max, coaFERROTEC_obj[i].Corner_ave, coaFERROTEC_obj[i].Corner_std, coaFERROTEC_obj[i].Corner_min, coaFERROTEC_obj[i].Corner_max, coaFERROTEC_obj[i].Thickness_ave, coaFERROTEC_obj[i].Thickness_std, coaFERROTEC_obj[i].Thickness_min, coaFERROTEC_obj[i].Thickness_max, coaFERROTEC_obj[i].TTV_ave, coaFERROTEC_obj[i].TTV_std, coaFERROTEC_obj[i].TTV_min, coaFERROTEC_obj[i].TTV_max, coaFERROTEC_obj[i].RA_ave, coaFERROTEC_obj[i].RA_std, coaFERROTEC_obj[i].RA_min, coaFERROTEC_obj[i].RA_max, coaFERROTEC_obj[i].RZ_ave, coaFERROTEC_obj[i].RZ_std, coaFERROTEC_obj[i].RZ_min, coaFERROTEC_obj[i].RZ_max, coaFERROTEC_obj[i].Vertical_ave, coaFERROTEC_obj[i].Vertical_std, coaFERROTEC_obj[i].Vertical_min, coaFERROTEC_obj[i].Vertical_max, coaFERROTEC_obj[i].Copper_content, coaFERROTEC_obj[i].Iron_content, coaFERROTEC_obj[i].AcceptReject]
+                                            },  function(err, results, fields){
+                                            });
+
+                                            connection.release();
+                                        }
+
+                                    });
+                                }
+                                
+                                for(let i=0;i<ingotFERROTEC_obj.length;i++){
+                                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                                        if(connection){
+                                            connection.query({
+                                                sql: 'INSERT INTO tbl_ferrotec_ingot SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?,ingot_lot_id=?, bundle_barcode=?',
+                                                values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, ingotFERROTEC_obj[i].ingot_lot_id, ingotFERROTEC_obj[i].bundle_barcode]
+                                            }, function(err, results, fields){
+                                            });
+                                        
+                                            connection.release();
+
+                                        }
+
+                                    });
+                                }
+
+                                res.send(JSON.stringify({success: 'Uploading... Be patient. Large files need more time to build. Do not refresh.'}));
+
+                            });
+                        });
+                    });
+                });
+
             }
 
         } else if(post_xlf.header[2]['value'] == '1004'){ // NORSUN
@@ -1266,7 +1416,8 @@ module.exports = function(app){
         res.header('Pragma', 'no-cache');
                     
             mysqlCloud.connectAuth.getConnection(function(err, connection){
-
+                if(err){return res.send('Cannot connect to database.')};
+            
             function checkName(){
                 return new Promise(function(resolve, reject){
 
@@ -1330,7 +1481,7 @@ module.exports = function(app){
             function uploadHistory(){
                 return new Promise(function(resolve, reject){
                         connection.query({
-                            sql: 'SELECT B.supplier_name, A.order_no, A.username, A.upload_time FROM (SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_achl_ingot GROUP BY order_no ) A JOIN (SELECT supplier_id, supplier_name FROM tbl_supplier_list) B ON A.supplier_id = B.supplier_id ORDER BY A.upload_time DESC'
+                            sql: 'SELECT B.supplier_name, A.order_no, A.username, A.upload_time FROM (SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_achl_ingot GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ferrotec_ingot GROUP BY order_no) A JOIN (SELECT supplier_id, supplier_name FROM tbl_supplier_list) B ON A.supplier_id = B.supplier_id ORDER BY A.upload_time DESC'
                         }, function(err, results, fields){
                             let uploaded_history = [];
                                 for(let i=0; i<results.length;i++){
