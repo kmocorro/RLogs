@@ -30,7 +30,7 @@ $('document').ready(function(){
             success: function(response){
                 if(response.auth == true){
                    
-                   window.location.href='/activities';
+                   window.location.href='/overallactivity';
 
                 } else {
                     $("#error").fadeIn(1000, function(){

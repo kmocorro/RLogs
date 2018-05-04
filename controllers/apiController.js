@@ -1542,11 +1542,71 @@ module.exports = function(app){
     /**
      * REST API CoA Rev2 Kitting
      */
+    app.get('/kitting', verifyToken, function(req, res){
+            
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
+
+        mysqlCloud.connectAuth.getConnection(function(err, connection){
+            if(err){res.send({err: 'Error in connecting to database.'})};
+            
+            function checkName(){
+                return new Promise(function(resolve, reject){
+                    
+                    connection.query({
+                        sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                        values: [req.userID]
+                    },  function(err, results, fields){
+                        let user_details = [];
+                        if(results){
+                           try{
+                                user_details.push({
+                                    id: results[0].id,
+                                    name: results[0].name,
+                                    username: results[0].username,
+                                    email: results[0].email,
+                                    department: results[0].department
+                                });
+
+                                resolve(user_details);
+                           } catch (error){
+                                user_details.push({
+                                    id: 'undefined',
+                                    name: 'undefined',
+                                    username: results[0].username,
+                                    email: 'undefined',
+                                    department: 'undefined'
+                                });
+
+                                resolve(user_details);
+                           }
+                        }
+                    });
+
+                });
+
+            }
+
+            function kittingFormDetails(){
+                return new Promise(function(resolve, reject){
+                    
+                    
+
+                });
+            }
+            
+            
+
+        });
+    });
 
 
     /**
      * REST API CoA Rev2 Operator UI
      */
-     
+    app.get('/operator/:line', function(req, res){
+
+    });
 
 }
