@@ -18,6 +18,7 @@ module.exports = function(app){
     app.post('/api/runlogs', verifyToken, function(req, res){
         let post_rlogs = req.body;
       //  console.log(post_rlogs);
+
         
         if(post_rlogs.date_range && post_rlogs.process_name && post_rlogs.comments && req.userID){
             
@@ -112,10 +113,132 @@ module.exports = function(app){
     
             });
         } else {
-            res.send({err: 'Fill up your form.'});
+            res.send({err: 'Fill up your form properly.'});
         }
         
         
+    });
+
+    /**
+     * Kitting Barcode API uploader
+     */
+    app.post('/api/kitting', verifyToken, function(req, res){
+        let post_kitting = req.body;
+
+        if(post_kitting.box_no && post_kitting.multifield){
+            let taggedRuncards = [];
+            
+            if((post_kitting.multifield).constructor === Array){
+                for(let i = 0; i<post_kitting.multifield.length; i++){
+                    if(post_kitting.multifield[i] != ''){
+                        taggedRuncards.push({
+                            runcard: post_kitting.multifield[i]
+                        });
+                    }
+                }
+            } else {
+                if(post_kitting.multifield[0] != ''){
+                    taggedRuncards = {
+                        runcard: post_kitting.multifield[0]
+                    };
+                }
+            }
+
+            mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        //mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                        //    connection.release();
+                        //});
+    
+                    });
+                }
+
+                checkName().then(function(user_details){
+
+                    function checkBoxIDifExist(){
+                        return new Promise(function(resolve, reject){
+                        
+                            connection.query({
+                                sql: 'SELECT * FROM tbl_coa_box WHERE box = ?',
+                                values: [post_kitting.box_no]
+                            }, function(err, results, fields){
+                                if(results.length>0){
+                                    res.send({err: 'Box ID already exists!'});
+                                } else {
+
+                                    function uploadKitting(){
+                                        return new Promise(function(resolve, reject){
+                                            
+                                            for(let i=0; i<taggedRuncards.length;i++){
+                
+                                                connection.query({
+                                                    sql: 'INSERT INTO tbl_coa_box SET upload_date=?, box=?, runcard=?, username=?',
+                                                    values: [new Date(), post_kitting.box_no, taggedRuncards[i].runcard, user_details[0].username]
+                                                },  function(err, results, fields){
+                    
+                                                });
+                
+                                            }
+
+                                            connection.release();
+                                            res.send({success: 'Success!'});
+                
+                                        });
+                                    }
+                
+                                    return uploadKitting();
+
+                                }
+                            });
+
+                        });
+                    }
+
+
+                    return checkBoxIDifExist();
+                    
+
+                });
+
+            });
+
+
+        } else {
+            res.send({err: 'Fill up your form properly.'});
+        }
+
     });
 
     /**
@@ -1039,7 +1162,7 @@ module.exports = function(app){
                                 
                                 for(let i = 1; i<ingotACHL_obj.length;i++){
                                     mysqlCloud.connectAuth.getConnection(function(err, connection){
-                                        if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
+                                       // if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
                                         
                                         if(connection){
                                             connection.query({
@@ -1591,12 +1714,15 @@ module.exports = function(app){
             function kittingFormDetails(){
                 return new Promise(function(resolve, reject){
                     
-                    
+
 
                 });
             }
             
-            
+            checkName().then(function(user_details){
+                
+                res.render('kitting', {user_details});
+            });
 
         });
     });

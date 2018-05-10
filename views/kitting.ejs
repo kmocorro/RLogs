@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>  
-    <title>Fab4META - Overall </title>
+    <title>Fab4META - Kitting </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
@@ -22,8 +22,6 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/AdminLTE.min.css">
     
-    
-    
     <!-- DataTables -->
     <link rel="stylesheet" href="../dist/datatables/css/dataTables.bootstrap.min.css">
     <!-- Theme skin -->
@@ -39,7 +37,7 @@
     <script type="text/javascript" src="../src/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="../src/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/validation.min.js"></script>
-    <script type="text/javascript" src="../js/verifyRLogs.js"></script>
+    <script type="text/javascript" src="../js/verifyKitting.js"></script>
     <script type="text/javascript" src="../js/moment.js"></script>
     <script type="text/javascript" src="../js/bootstrap-datetimepicker.js"></script>
 
@@ -47,6 +45,11 @@
       #logs { list-style-type: none; margin: 0; padding: 0; }
       #logs li { padding: 5px 10px; }
       #logs li:nth-child(odd) { background: #eee; }
+      
+    a.rowDelete {
+        cursor: pointer;
+        padding-left: 9px;
+    }
     </style>
 
 </head>
@@ -111,14 +114,14 @@
         </div>
         <div class="pull-left info">
           <p><a href="#" style="text-decoration: none;"><%= user_details[0].name %></a></p>
-          <a href="#"><i class="fa fa-vcard text-green" ></i> <%= user_details[0].department%></a>
+          <a href="#"><i class="fa fa-vcard text-green"></i> <%= user_details[0].department%></a>
         </div>
       </div>
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">DASHBOARD</li>
-        <li><a href="#"  style="text-decoration: none;"><i class="fa fa-home text-yellow"></i> <span>Home</span></a></li>
-        <li class="treeview">
+        <li><a href="/overallactivity"  style="text-decoration: none;"><i class="fa fa-home"></i> <span>Home</span></a></li>
+        <li class="active treeview">
           <a href="#">
             <i class="fa fa-cogs"></i> 
             <span>Apps</span>
@@ -128,14 +131,14 @@
           </a>
           <ul class="treeview-menu">
 
-            <li class="treeview">
-              <a href="#" style="text-decoration: none;"><i class="fa fa-circle-o"></i> <span>Manufacturing</span>
+            <li class="active treeview">
+              <a href="#" style="text-decoration: none;"><i class="fa fa-circle-o  text-yellow"></i> <span>Manufacturing</span>
                 <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
               </a>
               <ul class="treeview-menu">
-                <li><a href="/kitting" style="text-decoration: none;"><i class="fa fa-cube"></i>  
+                <li><a href="#" style="text-decoration: none;"><i class="fa fa-cube  text-yellow"></i>  
                   <span>Kitting</span>
                   </a>
                 </li>
@@ -172,6 +175,7 @@
 
           </ul>
         </li>
+        
 
         <li class="treeview">
           <a href="#">
@@ -181,8 +185,9 @@
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
+
           <ul class="treeview-menu">
-            
+
             <li class="treeview">
               <a href="#" style="text-decoration: none;"><i class="fa fa-circle-o"></i> <span>Fab Dashboard</span>
                 <span class="pull-right-container">
@@ -221,8 +226,11 @@
               </ul>
             </li>
 
+
+
           </ul>
         </li>
+       
         
         <!--<li class="header"><span>FAB<span style="color:orange;margin:1px;">4</span></li>-->
         <!--<li class="active treeview">-->
@@ -291,12 +299,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Fab4 Overall
-        <small>activity dashboard</small>
+        Fab4 <%= user_details[0].department%>
+        <small>box number and runcard uploader</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/activities"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">overallactivity</li>
+        <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Kitting</li>
       </ol>
     </section>
 
@@ -305,72 +313,68 @@
 
       <div class="row">
         <!-- Default box -->
-          
-        <!-- Log Box-->
-        <div class="col-md-12">
-          
-            <div class="box box-default" style="height: 100%;">
+        <div class="col-md-4">
+            <div class="box box-primary" style="height: 100%;">
                 <div class="box-header with-border">
-                    <h3 class="box-title" style="padding-bottom:12px;">In case you missed it</h3>
+                    <h3 class="box-title">Use Barcode Scanner</h3>
         
                     <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                    <!--<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fa fa-minus"></i></button>
-                    <!--<button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
                         <i class="fa fa-times"></i></button>-->
                     </div>
                 </div>
-                <!-- /.box-header -->
-                
-                <div class="box-body table-responsive">
-                    <table id="overallLogs" class="table table-hover">
-                      
-                      <thead>
-                        <tr>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Process</th>
-                        <th>Activity</th>
-                        <th>Owner</th>
-                        <th>Duration</th>
-                        </tr>
-                        
-                      </thead>
-                        <% for (let i=0; i < rlogs_list.length; i++) {  %>
-                        <tr>
-                        <td><%= rlogs_list[i].startDate %></td>
-                        <td><%= rlogs_list[i].endDate %></td>
-                          
-                          <td><% if(rlogs_list[i].process_name.length > 0){ %>
-                              <% for(let j=0; j < rlogs_list[i].process_name.length; j++) { %>
-                              <span class="label label-primary"><%= rlogs_list[i].process_name[j].process %></span>
-                              <% } %>
-                              <% } else {%>
-                              <span class="label label-primary"><%= rlogs_list[i].process_name.process %></span>
-                              <% } %>
-                          </td>
-                          
-                         
-                        <td><%= rlogs_list[i].comments %></td>
-                        <td><%= rlogs_list[i].name %></td>
-                        <td><%= rlogs_list[i].duration %></td>
-                        
-                        </tr>
-                        <% } %>
-                    </table>
-                <ul id="logs"></ul>
+                <div class="box-body">
+                    <form action="" method="post" id="kitting_form" name="kitting_form" class="form-upload">
 
+                        <div class="header_div" style="padding-bottom:5px;">
+                            
+                            <!-- Box input field -->
+                            <div class="form-group">
 
+                                <div class="box_no_div" style="padding-bottom:5px;">
+                                    <h5>Scan SMAT Box ID</h5> 
+                                    <input class="form-control" id="box_no" name="box_no"  placeholder="Scan SMAT Box as seen in CoA file" autofocus/>
+                                </div>
+                              <!-- /.input group -->
+                            </div>
+                            
+                            <div class="runcard_no_div" style="padding-bottom:5px;">
+                                <h5>Tag Runcard</h5> 
+
+                                <section id="multiRow">
+                                    <div id="initRow">
+                                        <input name="multifield" class="form-control" id="runcard_no" placeholder="Scan Runcard number" style="display:inline; width:90%;"/>
+                                    </div>
+                                </section>
+                               
+                            </div>
+
+                            
+                            
+                            <div id="error">
+                                <!-- error / success will be shown here -->
+                            </div>
+
+                            
+                            
+                        </div>
+                        <div class="submit_div" style="padding-top: 5px;">
+                            <button id="btn-kitting" class="btn btn-md btn-warning pull-right" name="Submit" type="Submit" value="Save">Submit</button>
+                        </div>
+                        
+                    </form>
                 </div>
-                
-                
-                <!-- /.box-footer-->
+                <!-- /.box-body 
+                <div class="box-footer">
+                    <small style="float:right"><i>All fields are required.</i></small>
+                </div>
+               /.box-footer-->
             </div>
-            
-        
-
         </div>
+          
         
       </div>
         <!-- /.box -->
@@ -615,18 +619,18 @@
     
     $('.select2').select2();
 
-    $('#overallLogs').DataTable({
+    $('#savedlogs').DataTable({
       //'order'       : [[0, 'desc']],
       'order'       : false,
       'paging'      : true,
-      'lengthChange': true,
-      'searching'   : true,
+      'lengthChange': false,
+      'searching'   : false,
       'ordering'    : false,
-      'info'        : true,
+      'info'        : false,
       'autoWidth'   : false,
       'responseive': true,
       "columnDefs": [
-    { "width": "8%", "targets": [0, 1, 2] },
+    { "width": "12%", "targets": [0, 1, 2] },
     { "width": "7%", "targets": [-1, -2] }
   ]
     });
@@ -639,88 +643,71 @@
       } 
     });
 
-    for(let i=0; i< '<%= rlogs_list.length %>';i++){
-      $('#date_range_update' + i).daterangepicker({
-      timePicker: true, 
-      timePickerIncrement: 30, 
-      locale: {
-        format: 'MM/DD/YYYY h:mm A'
-      } 
-      });
-    }
     
   });
 </script>
+
 <script>
-$('document').ready(function(){
 
-    for(let i=0; i < '<%= rlogs_list.length %>'; i++){
-      
-      $('#rlogs_form_update' + i).validate({
-            rules:{
-                date_range_update: {
-                    required: true
-                },
-                process_name_update: {
-                    required: true
-                },
-                comments_update:{
-                    required: true
-                },
-                activity_id:{
-                    number: true,
-                    required: true
-                }
-            },
-            messages:{
-                date_range_update: 'Enter date range.',
-                process_name_update: 'Enter process name affected.',
-                comments_update: 'Enter your activity.',
-            },
-            submitHandler: submitForm_update
-        });
+  $('document').ready(function(){
 
-      function submitForm_update(){
-
-            var data = $('#rlogs_form_update' + i).serialize();
-    
-            $.ajax({
-                type: 'POST',
-                url: '/api/update',
-                data: data,
-                beforeSend: function(){
-                    $('#error_update' + i).fadeOut();
-                    $('#btn-rlogs-update'  + i).prop('disabled', true);
-                    $('btn-rlogs-update' + i).html('Post Your Activities');
-                },
-                success: function(response){
-                    if(response.success){
-                        $("#btn-rlogs-update" + i).html('Saving...');
-                        $("#btn-rlogs-update" + i).prop("disabled",true);
-                        $("#error_update"  + i).fadeIn(0, function(){						
-                            $("#error_update"  + i).html('<div class="alert alert-success">'+response.success+' </div>');
-                        });
-                        $("#btn-rlogs-update").html('Post Your Activities');
-                        setTimeout(' window.location.reload(true); ',500);
-    
-                    } else {
-                        $("#error_update"  + i).fadeIn(1000, function(){
-    
-                            $("#error_update"  + i).html('<div class="alert alert-danger">'+response.err+' </div>'); 
-                            $("#btn-rlogs-update" + i).prop("disabled",false);
-                            $("#btn-rlogs-update" + i).html('Try again');
-    
-                        });
-                       
-                    }
-                }
-            });
-        
+    $('#box_no').keydown(function(e){
+        if (e.keyCode == 13) { // barcode scanned!
+            $('#runcard_no').focus();
+            return false; // block form from being submitted yet
         }
-    }
-        
+    });
+
+  });
+  
     
-});
+    function addRow(section, initRow) {
+        var newRow = initRow.clone().removeAttr('id').addClass('new').insertBefore(initRow),
+            deleteRow = $('<a class="rowDelete"><i class="fa fa-close"></i></a>');
+    
+        newRow
+          
+            .append(deleteRow)
+            .on('click', 'a.rowDelete', function() {
+                removeRow(newRow);
+            })
+            .slideDown(300, function() {
+                $(this)
+                    .find('input').focus();
+            })
+            //.change(($('.new > :input').removeAttr('id').attr('id', 'newInput')))
+            .keydown(function(e){
+              if (e.keyCode == 13){
+                $('#initRow').find('input').focus();
+                return false;
+              }
+            })
+            
+            //.change(($('.new > :input').removeAttr('id').attr('id', 'newInput')))
+    }
+            
+    function removeRow(newRow) {
+        newRow
+            .slideUp(200, function() {
+                $(this)
+                    .next('div:not(#initRow)')
+                        .find('input').focus()
+                        .end()
+                    .end()
+                    .remove();
+            });
+    }
+
+    $(function () {
+        var initRow = $('#initRow'),
+            section = initRow.parent('section');
+        
+        initRow.on('focus', 'input', function() {
+            addRow(section, initRow);
+        });
+    });
+
+
 </script>
 </body>
 </html>
