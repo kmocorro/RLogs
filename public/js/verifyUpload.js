@@ -94,7 +94,7 @@ $('document').ready(function(){
                     
                 } else {
                     $("#error").fadeIn(0, function(){						
-                        $("#error").html('<div class="alert alert-danger">'+response+'</div>'); 
+                        $("#error").html('<div class="alert alert-danger">'+response.err+'</div>'); 
                         $("#btn-upload").prop("disabled",false);
                         $("#xlf").prop("disabled",false);
                         $("#btn-upload").html('Try again');
