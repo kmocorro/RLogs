@@ -176,6 +176,7 @@ module.exports = function(app){
                                         });
     
                                         resolve(user_details);
+                                        // hmmm
                                    }
                                 }
                             });
