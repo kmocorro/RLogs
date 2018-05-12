@@ -243,6 +243,14 @@ module.exports = function(app){
     });
 
     /**
+     * Operator Stack ID/ Bundle Barcode uploader
+     */
+    app.post('/api/stackid', function(req, res){
+        let post_operator = req.body;
+        console.log(post_operator);
+    });
+
+    /**
      * Activity API update
      */
     app.post('/api/update', verifyToken, function(req, res){
@@ -1851,8 +1859,15 @@ module.exports = function(app){
     /**
      * REST API CoA Rev2 Operator UI
      */
-    app.get('/operator/:line', function(req, res){
-
+    app.get('/acs/:line', function(req, res){
+    
+        if(req.params.line == '17' || req.params.line == '18'  || req.params.line == '19'  || req.params.line == '20'  || req.params.line == '21'  || req.params.line == '22'){
+            let lineGG = req.params.line;
+            res.render('operator', { lineGG });
+        } else {
+            res.send('404 | Link unavailable.')
+        }
+        
     });
 
 }
