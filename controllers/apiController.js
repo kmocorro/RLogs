@@ -247,7 +247,159 @@ module.exports = function(app){
      */
     app.post('/api/stackid', function(req, res){
         let post_operator = req.body;
-        console.log(post_operator);
+
+        if(post_operator.multifield){
+            let taggedStackID = [];
+
+            if((post_operator.multifield).constructor === Array){
+                for(let i = 0; i<post_operator.multifield.length; i++){
+                    if(post_operator.multifield[i] != ''){
+                        taggedStackID.push({
+                            runcard: post_operator.multifield[i]
+                        });
+                    }
+                }
+            } else {
+                if(post_operator.multifield[0] != ''){
+                    taggedStackID = {
+                        runcard: post_operator.multifield[0]
+                    };
+                }
+            }
+
+            mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                function removeDups(){
+                    return new Promise(function(resolve, reject){
+
+                        let noDups = [];
+                        let noDupsObj = {};
+
+                        for(let i=0;i<taggedStackID.length;i++){
+                            noDupsObj[taggedStackID[i].runcard]=0;
+                        }
+
+                        for(let i in noDupsObj){
+                            noDups.push(i);
+                        }
+
+                        resolve(noDups);
+
+                    });
+                }
+
+                function checkStackIDifExistsInCOA(){
+                    return new Promise(function(resolve, reject){
+                        let xCount = 0;
+                        let lotIDResults = [];
+
+                        for(let i=0;i<taggedStackID.length;i++){
+
+                            connection.query({
+                                sql: 'SELECT * FROM view_consolidate_barcodes WHERE lot_id =?',
+                                values: [taggedStackID[i].runcard]
+                            }, function(rr, results, fields){
+
+                                xCount = xCount + 1;
+
+                                if(results){
+
+                                    if(results.length > 0){
+                                        lotIDResults.push(
+                                            results[0].barcode
+                                        );
+                                    }
+                                }
+
+                                if(taggedStackID.length == xCount){
+                                    //console.log(taggedStackID.length, xCount)
+                                    resolve(lotIDResults);
+                                }
+
+                            });
+
+                        }
+
+
+                    });
+                }
+
+                function checkStackIDifExists(){
+                    return new Promise(function(resolve, reject){
+                        let xCount = 0;
+                        let runcardResults = [];
+
+                        for(let i=0;i<taggedStackID.length;i++){
+                            
+                            //console.log(taggedStackID.length, xCount)
+                            connection.query({
+                                sql: 'SELECT * FROM tbl_consumed_barcodes WHERE barcode=?',
+                                values: [taggedStackID[i].runcard]
+                            },  function(err, results, fields){
+                                
+                                xCount = xCount + 1;
+
+                                if(results){
+
+                                    if(results.length > 0){
+                                       
+                                        runcardResults.push(
+                                            results[0].barcode
+                                        );
+
+                                    }
+                                    
+                                }
+                                
+                                if(taggedStackID.length == xCount){
+                                    //console.log(taggedStackID.length, xCount)
+                                    resolve(runcardResults);
+                                }
+
+                            });
+
+                            
+
+                        }
+
+                    });
+                }
+
+                removeDups().then(function(noDups){
+                    console.log(noDups);
+                    
+                    return checkStackIDifExistsInCOA().then(function(lotIDResults){
+                        return checkStackIDifExists().then(function(runcardResults){
+                            
+                            if(lotIDResults.length > 0){
+                                
+                            }
+                            if(runcardResults.length == 0){
+                                for(let i=0;i<noDups.length;i++){
+
+                                    connection.query({
+                                        sql: 'INSERT INTO tbl_consumed_barcodes SET upload_date =?, line =?, barcode=?',
+                                        values: [new Date(), post_operator.liner, noDups[i]]
+                                    }, function(err, results, fields){
+                                    });
+                                }
+                                
+                                res.send({success: 'Done.'});
+                            } else {
+                            
+                                res.send({err: runcardResults + ' is already exists.'});
+                            }
+                            connection.release();
+
+                        });
+                    });
+                });
+
+            });
+
+        } else {
+            res.send({err: 'Fill up your form properly'});
+        }
     });
 
     /**
