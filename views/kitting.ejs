@@ -374,6 +374,47 @@
                /.box-footer-->
             </div>
         </div>
+
+        <!-- Log Box-->
+        <div class="col-md-8">
+            <div class="box box-default" style="height: 100%;">
+                <div class="box-header with-border">
+                    <h3 class="box-title" style="padding-bottom:12px;">Tag History</h3>
+
+                    <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fa fa-minus"></i></button>
+                    </div>
+
+                </div>
+                <!-- /.box-header -->
+
+                <div class="box-body table-responsive ">
+                    <table id="kitting_history" class="table table-hover">
+                    <thead>
+                        <tr>
+                        <th>Upload Date</th>
+                        <th>Box ID</th>
+                        <th>Runcard</th>
+                        <th>User</th>
+                        </tr>
+                    </thead>
+                    <% for (let i=0; i < kittingUploadHistory_obj.length; i++) {  %>
+                        <tr>
+                        <td><%= kittingUploadHistory_obj[i].upload_date %></td>
+                        <td><%= kittingUploadHistory_obj[i].box %></td>
+                        <td><span class="label label-success"><%= kittingUploadHistory_obj[i].runcard %></span></td>
+                        <td><%= kittingUploadHistory_obj[i].username %></td>
+                        </tr>
+                    <% } %>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <small style="float:right"><i>Hey,</i></small>
+                </div>
+            </div>
+        </div>
           
         
       </div>
@@ -619,20 +660,16 @@
     
     $('.select2').select2();
 
-    $('#savedlogs').DataTable({
+    $('#kitting_history').DataTable({
       //'order'       : [[0, 'desc']],
-      'order'       : false,
+      'order'       : true,
       'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
+      'lengthChange': true,
+      'searching'   : true,
       'ordering'    : false,
-      'info'        : false,
-      'autoWidth'   : false,
+      'info'        : true,
+      'autoWidth'   : true,
       'responseive': true,
-      "columnDefs": [
-    { "width": "12%", "targets": [0, 1, 2] },
-    { "width": "7%", "targets": [-1, -2] }
-  ]
     });
 
     $('#date_range').daterangepicker({

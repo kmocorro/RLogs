@@ -3,7 +3,7 @@ let config = require('./config');
 
 function verifyToken(req, res, next){
     let token = req.cookies.auth;
-    if(!token) return res.status(403).send('No token provided.') ;
+    if(!token)  return res.render('404');
 
     jwt.verify(token, config.secret, function(err, decoded){
         if(err) return res.render('404');
@@ -13,4 +13,4 @@ function verifyToken(req, res, next){
     });
 }
 
-module.exports = verifyToken;
+module.exports = verifyToken;   

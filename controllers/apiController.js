@@ -1991,17 +1991,43 @@ module.exports = function(app){
 
             }
 
-            function kittingFormDetails(){
+            function kittingUploadHistory(){
                 return new Promise(function(resolve, reject){
                     
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                        connection.query({
+                            sql: 'SELECT * FROM tbl_coa_box'
+                        },  function(err, results, fields){
+                            if(results){
+                                let kittingUploadHistory_obj = [];
+
+                                for(let i=0; i<results.length;i++){
+                                    kittingUploadHistory_obj.push({
+                                        id : results[i].id,
+                                        upload_date : results[i].upload_date,
+                                        box : results[i].box,
+                                        runcard : results[i].runcard,
+                                        username: results[i].username
+                                    });
+                                }
+
+                                resolve(kittingUploadHistory_obj);
+                            }
+                        });
+
+                    });
 
 
                 });
             }
             
             checkName().then(function(user_details){
-                
-                res.render('kitting', {user_details});
+                return kittingUploadHistory().then(function(kittingUploadHistory_obj){
+                    
+                    res.render('kitting', {kittingUploadHistory_obj, user_details});
+
+                });
             });
 
         });
