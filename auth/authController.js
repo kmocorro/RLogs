@@ -47,6 +47,7 @@ module.exports = function(app){
                                         expiresIn: 86400
                                     });
 
+                                    console.log(new Date() + ' - ' + req.body.username + ' has logged in.');
                                     res.cookie('auth', token);
                                     res.status(200).send({ auth: true });
                                 
