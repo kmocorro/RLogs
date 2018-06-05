@@ -48,7 +48,7 @@ module.exports = function(app){
                                         return res.send({err: 'Invalid username or password.' });
                                         
                                     } else {
-                                        
+
                                         let token = jwt.sign({ id: results[0].id }, config.secret, { 
                                             expiresIn: 86400
                                         });
@@ -90,8 +90,8 @@ module.exports = function(app){
                             if(resolvedAuth == true){
 
                                 connection.query({
-                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?',
-                                    values:[new Date(), 'login', req.body.username, 'SUCCESS']
+                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?, user_ip=?' ,
+                                    values:[new Date(), 'login', req.body.username, 'SUCCESS', req.ip]
                                 },  function(err, results, fields){
                                     
                                     console.log(new Date() + ' - ' + req.body.username + ' has successfully logged in.');
@@ -100,8 +100,8 @@ module.exports = function(app){
                             } else if(resolvedAuth == false){
                                 
                                 connection.query({
-                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?',
-                                    values:[new Date(), 'login', req.body.username, 'FAILED']
+                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?, user_ip=?',
+                                    values:[new Date(), 'login', req.body.username, 'FAILED', req.ip]
                                 },  function(err, results, fields){
                                     console.log(new Date() + ' - ' + req.body.username + ' login failed. ');
                                 });
