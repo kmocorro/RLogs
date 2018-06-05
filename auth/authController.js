@@ -41,18 +41,34 @@ module.exports = function(app){
                                     let resultPass = results[0].password;
                                     let passwordIsValid = bcrypt.compareSync(req.body.password, resultPass);
 
-                                    if(!passwordIsValid){ return res.send({err: 'Invalid username or password.' })};
+                                    if(!passwordIsValid){ 
+                                        let resolvedAuth = false;
+                                        resolve(resolvedAuth);
 
-                                    let token = jwt.sign({ id: results[0].id }, config.secret, { 
-                                        expiresIn: 86400
-                                    });
+                                        return res.send({err: 'Invalid username or password.' });
+                                        
+                                    } else {
+                                        
+                                        let token = jwt.sign({ id: results[0].id }, config.secret, { 
+                                            expiresIn: 86400
+                                        });
 
-                                    console.log(new Date() + ' - ' + req.body.username + ' has logged in.');
-                                    res.cookie('auth', token);
-                                    res.status(200).send({ auth: true });
+                                        let resolvedAuth = true;
+
+                                        res.cookie('auth', token);
+                                        res.status(200).send({ auth: true });
+
+                                        
+                                        resolve(resolvedAuth);
+
+
+                                    }
                                 
                                 } catch(error){
                                     res.send({err: 'Invalid username or password.'});
+                                    
+                                    let resolvedAuth = false;
+                                    resolve(resolvedAuth);
                                 }
                                 
                             }
@@ -63,7 +79,43 @@ module.exports = function(app){
                 });
             }
 
-            logInUser();
+            logInUser().then(function(resolvedAuth){
+                
+                function user_logs(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                            if(err){ return res.status(500).send({err: 'Error getting into database.'})};
+
+                            if(resolvedAuth == true){
+
+                                connection.query({
+                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?',
+                                    values:[new Date(), 'login', req.body.username, 'SUCCESS']
+                                },  function(err, results, fields){
+                                    
+                                    console.log(new Date() + ' - ' + req.body.username + ' has successfully logged in.');
+                                });
+                                
+                            } else if(resolvedAuth == false){
+                                
+                                connection.query({
+                                    sql: 'INSERT INTO deepmes_user_logs SET user_log_date=?, user_move=?, username=?, user_log_status=?',
+                                    values:[new Date(), 'login', req.body.username, 'FAILED']
+                                },  function(err, results, fields){
+                                    console.log(new Date() + ' - ' + req.body.username + ' login failed. ');
+                                });
+                            }
+                        connection.release();        
+                        });
+                        
+
+                    });
+                }
+
+                return user_logs();
+
+            });
 
         } else {
             res.send({err: 'Invalid credentials.'});
