@@ -9,6 +9,8 @@ let verifyToken = require('./verifyToken');
 
 module.exports = function(app){
     
+    let numOfAttempts = 3;
+
     app.use(bodyParser.urlencoded({ extended: true }));
 
     app.get('/', function(req, res){
@@ -43,10 +45,23 @@ module.exports = function(app){
 
                                     if(!passwordIsValid){ 
                                         let resolvedAuth = false;
-                                        resolve(resolvedAuth);
-
-                                        return res.send({err: 'Invalid username or password.' });
                                         
+                                        numOfAttempts = numOfAttempts - 1;
+                                        
+                                        if(numOfAttempts > 0){
+
+                                            return res.send({err: 'Invalid username or password. ' + numOfAttempts + ' attempts remaining.'});
+                                            
+                                            resolve(resolvedAuth);
+
+                                            
+                                        } else if(numOfAttempts < 0){
+
+                                            return res.send({err: 'The account has been locked.'});
+
+                                        }
+
+
                                     } else {
 
                                         let token = jwt.sign({ id: results[0].id }, config.secret, { 

@@ -150,7 +150,7 @@
         <div class="col-md-4">
             <div class="box box-primary" style="height: 100%;">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Use Barcode Scanner</h3>
+                    <h3 class="box-title">Click box field and use Barcode Scanner</h3>
         
                     <div class="box-tools pull-right">
                     <!--<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
@@ -190,14 +190,52 @@
                         
                     </form>
                 </div>
-                <!-- /.box-body 
+                <!-- /.box-body --> 
                 <div class="box-footer">
-                    <small style="float:right"><i>All fields are required.</i></small>
+                    <small style="float:right"><i>Multiple entries will be <b>submitted</b> as one.</i></small>
                 </div>
-               /.box-footer-->
+              <!--/.box-footer-->
             </div>
         </div>
-          
+        
+        <!-- Log Box-->
+        <div class="col-md-8">
+            <div class="box box-default" style="height: 100%;">
+                <div class="box-header with-border">
+                    <h3 class="box-title" style="padding-bottom:12px;">Uploaded Stack IDs</h3>
+
+                    <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fa fa-minus"></i></button>
+                    </div>
+
+                </div>
+                <!-- /.box-header -->
+
+                <div class="box-body table-responsive ">
+                    <table id="operator_history" class="table table-hover">
+                    <thead>
+                        <tr>
+                        <th>Upload Date</th>
+                        <th>Line</th>
+                        <th>Stack ID</th>
+                        </tr>
+                    </thead>
+                    <% for (let i=0; i < operatorUploadHistory_obj.length; i++) {  %>
+                        <tr>
+                        <td><%= operatorUploadHistory_obj[i].upload_date %></td>
+                        <td><%= operatorUploadHistory_obj[i].line %></td>
+                        <td><span class="label label-success"><%= operatorUploadHistory_obj[i].barcode %></span></td>
+                        </tr>
+                    <% } %>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <small style="float:right"><i>Hey,</i></small>
+                </div>
+            </div>
+        </div>
         
       </div>
         <!-- /.box -->
@@ -471,7 +509,30 @@
 </script>
 
 <script>
-    
+  
+  $(function(){
+
+    $('#operator_history').DataTable({
+      //'order'       : [[0, 'desc']],
+      'order'       : true,
+      'paging'      : true,
+      'lengthChange': true,
+      'searching'   : true,
+      'ordering'    : false,
+      'info'        : true,
+      'autoWidth'   : true,
+      'responseive': true,
+    });
+
+    $('#date_range').daterangepicker({
+      timePicker: true, 
+      timePickerIncrement: 30, 
+      locale: {
+        format: 'MM/DD/YYYY h:mm A'
+      } 
+    });
+
+  });
 
     function addRow(section, initRow) {
         var newRow = initRow.clone().removeAttr('id').addClass('new').insertBefore(initRow),

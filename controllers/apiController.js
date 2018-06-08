@@ -1951,19 +1951,20 @@ module.exports = function(app){
         res.header('Expires', '-1');
         res.header('Pragma', 'no-cache');
 
-        mysqlCloud.connectAuth.getConnection(function(err, connection){
-            if(err){res.send({err: 'Error in connecting to database.'})};
+        
+        function checkName(){
+            return new Promise(function(resolve, reject){
             
-            function checkName(){
-                return new Promise(function(resolve, reject){
-                    
+                mysqlCloud.connectAuth.getConnection(function(err, connection){
+                if(err){res.send({err: 'Error in connecting to database.'})};
+
                     connection.query({
                         sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
                         values: [req.userID]
                     },  function(err, results, fields){
                         let user_details = [];
                         if(results){
-                           try{
+                        try{
                                 user_details.push({
                                     id: results[0].id,
                                     name: results[0].name,
@@ -1973,7 +1974,7 @@ module.exports = function(app){
                                 });
 
                                 resolve(user_details);
-                           } catch (error){
+                        } catch (error){
                                 user_details.push({
                                     id: 'undefined',
                                     name: 'undefined',
@@ -1983,54 +1984,58 @@ module.exports = function(app){
                                 });
 
                                 resolve(user_details);
-                           }
+                        }
+                        }
+                    });
+                    
+                    connection.release();
+                });
+            
+            });
+
+        }
+
+        function kittingUploadHistory(){
+            return new Promise(function(resolve, reject){
+                mysqlCloud.connectAuth.getConnection(function(err, connection){
+                    if(err){res.send({err: 'Error in connecting to database.'})};
+
+                    connection.query({
+                        sql: 'SELECT * FROM tbl_coa_box'
+                    },  function(err, results, fields){
+                        if(results){
+                            let kittingUploadHistory_obj = [];
+
+                            for(let i=0; i<results.length;i++){
+                                kittingUploadHistory_obj.push({
+                                    id : results[i].id,
+                                    upload_date : results[i].upload_date,
+                                    box : results[i].box,
+                                    runcard : results[i].runcard,
+                                    username: results[i].username
+                                });
+                            }
+
+                            resolve(kittingUploadHistory_obj);
                         }
                     });
 
+                connection.release();
                 });
 
-            }
 
-            function kittingUploadHistory(){
-                return new Promise(function(resolve, reject){
-                    
-                    mysqlCloud.connectAuth.getConnection(function(err, connection){
-
-                        connection.query({
-                            sql: 'SELECT * FROM tbl_coa_box'
-                        },  function(err, results, fields){
-                            if(results){
-                                let kittingUploadHistory_obj = [];
-
-                                for(let i=0; i<results.length;i++){
-                                    kittingUploadHistory_obj.push({
-                                        id : results[i].id,
-                                        upload_date : results[i].upload_date,
-                                        box : results[i].box,
-                                        runcard : results[i].runcard,
-                                        username: results[i].username
-                                    });
-                                }
-
-                                resolve(kittingUploadHistory_obj);
-                            }
-                        });
-
-                    });
-
-
-                });
-            }
-            
-            checkName().then(function(user_details){
-                return kittingUploadHistory().then(function(kittingUploadHistory_obj){
-                    
-                    res.render('kitting', {kittingUploadHistory_obj, user_details});
-
-                });
             });
+        }
+        
+        checkName().then(function(user_details){
+            return kittingUploadHistory().then(function(kittingUploadHistory_obj){
+                
+                res.render('kitting', {kittingUploadHistory_obj, user_details});
 
+
+            });
         });
+
     });
 
 
@@ -2041,10 +2046,46 @@ module.exports = function(app){
     
         if(req.params.line == '17' || req.params.line == '18'  || req.params.line == '19'  || req.params.line == '20'  || req.params.line == '21'  || req.params.line == '22'){
             let lineGG = req.params.line;
-            res.render('operator', { lineGG });
+
+            function operatorUploadHistory(){
+                return new Promise(function(resolve, reject){
+                    
+                    mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                        connection.query({
+                            sql: 'SELECT * FROM tbl_consumed_barcodes ORDER BY id DESC;'
+                        },  function(err, results, fields){
+                            if(results){
+                                let operatorUploadHistory_obj = [];
+
+                                for(let i=0; i<results.length;i++){
+                                    operatorUploadHistory_obj.push({
+                                        id : results[i].id,
+                                        upload_date : results[i].upload_date,
+                                        line : results[i].line,
+                                        barcode : results[i].barcode
+                                    });
+                                }
+
+                                resolve(operatorUploadHistory_obj);
+                            }
+                        });
+
+                        connection.release();
+
+                    });
+
+                });
+            }
+
+            operatorUploadHistory().then(function(operatorUploadHistory_obj){
+                res.render('operator', { operatorUploadHistory_obj, lineGG });
+            });
+
         } else {
             res.send('404 | Link unavailable.')
         }
+
         
     });
 
