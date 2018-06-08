@@ -79,8 +79,7 @@
             <!-- User Account: style can be found in dropdown.less -->
             <li class="dropdown user user-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="../style/user.png" class="user-image" alt="User Image">
-                <span class="hidden-xs">Production Operator</span>
+                <span class="hidden-xs"><i class="fa fa-sign-out"></i></span>
               </a>
               <ul class="dropdown-menu">
                 
@@ -120,7 +119,6 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
        
-        <li class="header">ABOUT</li>
         <li><a href="#" style="text-decoration: none;"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         <li><a href="#" style="text-decoration: none;"><i class="fa fa-info-circle"></i> <span>Information</span></a></li>
       </ul>
@@ -225,7 +223,7 @@
                         <tr>
                         <td><%= operatorUploadHistory_obj[i].upload_date %></td>
                         <td><%= operatorUploadHistory_obj[i].line %></td>
-                        <td><span class="label label-success"><%= operatorUploadHistory_obj[i].barcode %></span></td>
+                        <td><%= operatorUploadHistory_obj[i].barcode %></td>
                         </tr>
                     <% } %>
                     </table>
