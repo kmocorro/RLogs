@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>  
-    <title>Fab4META - Login </title>
+    <title>Fab4META - 401 </title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
@@ -14,8 +14,20 @@
     <link rel="stylesheet" href="../dist/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="../dist/ionicons/css/ionicons.min.css">
+    <!-- Date range picker-->
+    <link rel="stylesheet" href="../style/daterangepicker.css">
+    
+    <!-- Select 2-->
+    <link rel="stylesheet" href="../style/select2.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/AdminLTE.min.css">
+    
+    
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="../dist/datatables/css/dataTables.bootstrap.min.css">
+    <!-- Theme skin -->
+    <link rel="stylesheet" href="../dist/css/skins/_all-skins.min.css">
 
 
     <!-- Uploader form-->
@@ -40,47 +52,35 @@
 </head>
 
 <body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href="#"><b>Fab4</b>META</a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    <p class="login-box-msg">Sign in to start your session</p>
-    
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  
+    <!-- Main content -->
+    <section class="content" style="padding-top:250px;">
+      <div class="error-page">
+        <h2 class="headline text-yellow"> 401</h2>
 
-    <form action="" method="POST" id="login_auth" name="login_auth">
-      <div class="form-group has-feedback">
-        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-      </div>
-      <div class="form-group has-feedback">
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-      </div>
-      <div class="row">
-        <!-- /.col -->
-        <div class="col-xs-12">
-          <button type="submit" id="btn-login" class="btn btn-primary btn-block btn-flat">Sign In</button>
+        <div class="error-content">
+          <h3><i class="fa fa-warning text-yellow"></i> Unable to authenticate.</h3>
+
+          <p>
+            We could not find the page you were looking for.
+            Meanwhile, you may want to <a href="/login">Login</a> first.
+          </p>
+
         </div>
-        <!-- /.col -->
+        <!-- /.error-content -->
       </div>
-    </form>
-   
-    
-    <div id="error" style="padding-top: 10px;">
-        <!-- error / success will be shown here -->
-    </div>
-
-    <br/>
-   
-    <p class="login-box-msg" style="font-size:12px;">Do not use your Outlook credentials</p>
-
+      <!-- /.error-page -->
+    </section>
+    <!-- /.content -->
   </div>
-  <!-- /.login-box-body -->
-</div>
-<!-- /.login-box -->
+  <!-- /.content-wrapper -->
 
 <!-- jQuery 3 -->
 <script src="../dist/js/jquery-ui.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<link rel="stylesheet" href="../dist/bootstrap/css/bootstrap.min.css">
 
 </body>
 </html>
