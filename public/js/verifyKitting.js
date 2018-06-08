@@ -5,12 +5,13 @@ $('document').ready(function(){
                 required: true
             },
             multifield: {
-                required: true
+                required: true,
+                minlength: 15
             }
         },
         messages:{
             box_no: 'Enter Box no.',
-            multifield: 'Enter runcard no.'
+            multifield: 'Enter runcard no. Minimum 15 characters.'
         },
         submitHandler: submitForm
     });
