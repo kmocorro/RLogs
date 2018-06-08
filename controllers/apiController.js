@@ -2001,7 +2001,7 @@ module.exports = function(app){
                     if(err){res.send({err: 'Error in connecting to database.'})};
 
                     connection.query({
-                        sql: 'SELECT * FROM tbl_coa_box'
+                        sql: 'SELECT * FROM tbl_coa_box ORDER BY id DESC'
                     },  function(err, results, fields){
                         if(results){
                             let kittingUploadHistory_obj = [];
@@ -2009,7 +2009,7 @@ module.exports = function(app){
                             for(let i=0; i<results.length;i++){
                                 kittingUploadHistory_obj.push({
                                     id : results[i].id,
-                                    upload_date : results[i].upload_date,
+                                    upload_date : moment(results[i].upload_date).format('lll'),
                                     box : results[i].box,
                                     runcard : results[i].runcard,
                                     username: results[i].username
@@ -2053,7 +2053,7 @@ module.exports = function(app){
                     mysqlCloud.connectAuth.getConnection(function(err, connection){
 
                         connection.query({
-                            sql: 'SELECT * FROM tbl_consumed_barcodes ORDER BY id DESC;'
+                            sql: 'SELECT * FROM tbl_consumed_barcodes ORDER BY id DESC'
                         },  function(err, results, fields){
                             if(results){
                                 let operatorUploadHistory_obj = [];
@@ -2061,7 +2061,7 @@ module.exports = function(app){
                                 for(let i=0; i<results.length;i++){
                                     operatorUploadHistory_obj.push({
                                         id : results[i].id,
-                                        upload_date : results[i].upload_date,
+                                        upload_date : moment(results[i].upload_date).format('lll'),
                                         line : results[i].line,
                                         barcode : results[i].barcode
                                     });
