@@ -205,7 +205,7 @@ module.exports = function(app){
                                             for(let i=0; i<taggedRuncards.length;i++){
                 
                                                 connection.query({
-                                                    sql: 'INSERT INTO tbl_coa_box SET upload_date=?, box=?, runcard=?, username=?',
+                                                    sql: 'INSERT INTO tbl_coa_box SET upload_date=?, box_id=?, runcard=?, username=?', // change box TO box_id
                                                     values: [new Date(), post_kitting.box_no, taggedRuncards[i].runcard, user_details[0].username]
                                                 },  function(err, results, fields){
                     
@@ -1096,7 +1096,7 @@ module.exports = function(app){
                     return checkInvoiceIfExists().then(function(checkInvoiceIfExists_obj){
                         if(checkInvoiceIfExists_obj == ''){
                             return checkName().then(function(user_details){
-                                return proposed_cofa().then(function(xlf_barcode_obj){
+                                return proposed_cofa().then(function(xlf_proposed_obj){ // changed from xlf_barcode_obj - BUG (2018/06/25 7:47)
                                     return ingot_barcode().then(function(xlf_barcode_obj){
             
                                         for(let i=0;i<xlf_proposed_obj.length;i++){
@@ -1400,7 +1400,7 @@ module.exports = function(app){
                                                 
                                                 if(connection){
                                                     connection.query({
-                                                        sql: 'INSERT INTO tbl_achl_ingot SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, pallet_id=?, carton_id=?, lot_id=?, ausp_box_id=?, qty=?',
+                                                        sql: 'INSERT INTO tbl_achl_ingot SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, pallet_id=?, carton_id=?, lot_id=?, box_id=?, qty=?', // changed ausp_box_id to box_id
                                                         values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, ingotACHL_obj[i].pallet_id, ingotACHL_obj[i].carton_id, ingotACHL_obj[i].lot_id, ingotACHL_obj[i].ausp_box_id, ingotACHL_obj[i].qty]
                                                     },  function(err, results, fields){
 
@@ -1660,7 +1660,7 @@ module.exports = function(app){
                                                 if(connection){
 
                                                     connection.query({
-                                                        sql: 'INSERT INTO tbl_ferrotec_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, sunpower_lot_id=?, box_no=?, wafer_qty=?, wafer_qty_difference=?, block_length=?, totalCrystal=?, seedBlock=?, MCLT_top=?, MCLT_tail=?, Res_top=?, Res_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Dia_ave=?, Dia_std=?, Dia_min=?, Dia_max=?, Flat_ave=?, Flat_std=?, Flat_min=?, Flat_max=?, Flat_taper_ave=?, Flat_taper_std=?, Flat_taper_min=?, Flat_taper_max=?, Corner_ave=?, Corner_std=?, Corner_min=?, Corner_max=?, Thickness_ave=?, Thickness_std=?, Thickness_min=?, Thickness_max=?, TTV_ave=?, TTV_std=?, TTV_min=?, TTV_max=?, RA_ave=?, RA_std=?, RA_min=?, RA_max=?, RZ_ave=?, RZ_std=?, RZ_min=?, RZ_max=?, Vertical_ave=?, Vertical_std=?, Vertical_min=?, Vertical_max=?, Copper_content=?, Iron_content=?, AcceptReject=?',
+                                                        sql: 'INSERT INTO tbl_ferrotec_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, sunpower_lot_id=?, box_id=?, wafer_qty=?, wafer_qty_difference=?, block_length=?, totalCrystal=?, seedBlock=?, MCLT_top=?, MCLT_tail=?, Res_top=?, Res_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Dia_ave=?, Dia_std=?, Dia_min=?, Dia_max=?, Flat_ave=?, Flat_std=?, Flat_min=?, Flat_max=?, Flat_taper_ave=?, Flat_taper_std=?, Flat_taper_min=?, Flat_taper_max=?, Corner_ave=?, Corner_std=?, Corner_min=?, Corner_max=?, Thickness_ave=?, Thickness_std=?, Thickness_min=?, Thickness_max=?, TTV_ave=?, TTV_std=?, TTV_min=?, TTV_max=?, RA_ave=?, RA_std=?, RA_min=?, RA_max=?, RZ_ave=?, RZ_std=?, RZ_min=?, RZ_max=?, Vertical_ave=?, Vertical_std=?, Vertical_min=?, Vertical_max=?, Copper_content=?, Iron_content=?, AcceptReject=?', // changed box_no TO box_id
                                                         values:[form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaFERROTEC_obj[i].ingot_lot_id, coaFERROTEC_obj[i].sunpower_lot_id, coaFERROTEC_obj[i].box_no, coaFERROTEC_obj[i].wafer_qty, coaFERROTEC_obj[i].wafer_qty_difference, coaFERROTEC_obj[i].block_length, coaFERROTEC_obj[i].totalCrystal, coaFERROTEC_obj[i].seedBlock, coaFERROTEC_obj[i].MCLT_top, coaFERROTEC_obj[i].MCLT_tail, coaFERROTEC_obj[i].Res_top, coaFERROTEC_obj[i].Res_tail, coaFERROTEC_obj[i].Oi_top, coaFERROTEC_obj[i].Oi_tail, coaFERROTEC_obj[i].Cs_top, coaFERROTEC_obj[i].Cs_tail, coaFERROTEC_obj[i].Dia_ave, coaFERROTEC_obj[i].Dia_std, coaFERROTEC_obj[i].Dia_min, coaFERROTEC_obj[i].Dia_max, coaFERROTEC_obj[i].Flat_ave, coaFERROTEC_obj[i].Flat_std, coaFERROTEC_obj[i].Flat_min, coaFERROTEC_obj[i].Flat_max, coaFERROTEC_obj[i].Flat_taper_ave, coaFERROTEC_obj[i].Flat_taper_std, coaFERROTEC_obj[i].Flat_taper_min, coaFERROTEC_obj[i].Flat_taper_max, coaFERROTEC_obj[i].Corner_ave, coaFERROTEC_obj[i].Corner_std, coaFERROTEC_obj[i].Corner_min, coaFERROTEC_obj[i].Corner_max, coaFERROTEC_obj[i].Thickness_ave, coaFERROTEC_obj[i].Thickness_std, coaFERROTEC_obj[i].Thickness_min, coaFERROTEC_obj[i].Thickness_max, coaFERROTEC_obj[i].TTV_ave, coaFERROTEC_obj[i].TTV_std, coaFERROTEC_obj[i].TTV_min, coaFERROTEC_obj[i].TTV_max, coaFERROTEC_obj[i].RA_ave, coaFERROTEC_obj[i].RA_std, coaFERROTEC_obj[i].RA_min, coaFERROTEC_obj[i].RA_max, coaFERROTEC_obj[i].RZ_ave, coaFERROTEC_obj[i].RZ_std, coaFERROTEC_obj[i].RZ_min, coaFERROTEC_obj[i].RZ_max, coaFERROTEC_obj[i].Vertical_ave, coaFERROTEC_obj[i].Vertical_std, coaFERROTEC_obj[i].Vertical_min, coaFERROTEC_obj[i].Vertical_max, coaFERROTEC_obj[i].Copper_content, coaFERROTEC_obj[i].Iron_content, coaFERROTEC_obj[i].AcceptReject]
                                                     },  function(err, results, fields){
                                                     });
