@@ -2010,7 +2010,7 @@ module.exports = function(app){
                                 kittingUploadHistory_obj.push({
                                     id : results[i].id,
                                     upload_date : moment(results[i].upload_date).format('lll'),
-                                    box : results[i].box,
+                                    box_id : results[i].box_id, // box TO box_id
                                     runcard : results[i].runcard,
                                     username: results[i].username
                                 });
