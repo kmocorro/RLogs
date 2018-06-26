@@ -130,9 +130,10 @@
                   <span>CoA - Kitting</span>
                   </a>
                 </li>
+                <!--
                 <li class="treeview">
                   <a href="#" style="text-decoration: none;">
-                  <span style="font-weight:600">CoA - Operator</span>
+                  <span>CoA - Operator</span>
                   <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                   </span>
@@ -170,6 +171,7 @@
                     </li>
                   </ul>
                 </li>
+                -->
               </ul>
             </li>
 
@@ -195,7 +197,7 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="#" style="text-decoration: none;">
-                  <span>Certificate of Analysis</span>
+                  <span style="font-weight:600">Certificate of Analysis</span>
                   </a>
                 </li>
               </ul>
@@ -409,52 +411,7 @@
                 </div>
             </div>
             
-            <div class="col-md-8 pull-right">
-                <div class="box box-default" style="height: 100%;">
-                    <div class="box-header with-border">
-                        <h3 class="box-title" style="padding-bottom:12px;">Consumed Stack IDs</h3>
             
-                        <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fa fa-minus"></i></button>
-                        </div>
-                        <!--<button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                            <i class="fa fa-times"></i></button>
-                        </div>-->
-                    </div>
-                    <!-- /.box-header -->
-                    <div class="box-body table-responsive">
-                    <table id="consumed" class="table table-hover">
-                        <thead>
-                        <tr>
-                        <th>ID</th>
-                        <th>Consumed Date</th>
-                        <th>Line</th>
-                        <th>Lot ID</th>
-                        <th>Barcode</th>
-                        </tr>
-                        </thead>
-                        <% for (let i=0; i < consumed_obj.length; i++) {  %>
-                        <tr>
-                        <td><%= consumed_obj[i].consumed_id %></td>
-                        <td><%= consumed_obj[i].consumed_date %></td>
-                        <td><%= consumed_obj[i].consumed_line %></td>
-                        <td><%= consumed_obj[i].lot_id %></td>
-                        <td><span class="label label-success"><%= consumed_obj[i].consumed_barcode %></span></td>
-                        </tr>
-                        <% } %>
-                    </table>
-                    <ul id="logs"></ul>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                        <small style="float:right"><i></i></small>
-                    </div>
-                    <!-- /.box-footer-->
-                </div>
-                <!-- /.box-footer-->
-            </div>
         </div>
 
         <!--<div class="row">-->
@@ -820,7 +777,7 @@
       'ordering'    : false,
       'info'        : true,
       'autoWidth'   : false,
-      'pageLength'  : 4
+      'pageLength'  : 7
     });
   });
 </script>
