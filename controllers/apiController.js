@@ -97,7 +97,7 @@ module.exports = function(app){
                             //console.log(connection);
                             connection.query({
                                 sql: 'INSERT INTO tbl_rlogs SET startDate=?, endDate=?, process_name=?, comments=?, id_user=?, name=?, duration=?',
-                                values: [startDate, endDate, JSON.stringify(processArr),  post_rlogs.comments, user_details[0].id, user_details[0].name, durationVarchar]
+                                values: [startDate, endDate, JSON.strinfy(processArr).process,  post_rlogs.comments, user_details[0].id, user_details[0].name, durationVarchar]
                             }, function(err, results, fields){
                                 if(err){ return res.send({err: 'database insert error @ api rlogs'})}
                                 res.send({success: 'Form has been saved!'});
