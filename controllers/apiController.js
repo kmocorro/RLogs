@@ -733,6 +733,7 @@ module.exports = function(app){
          * 1004 - NORSUN
          * 1005 - ACMK
          * 1006 - LONGI
+         * 1007 - ACHL v2
          */
 
         if(post_xlf.header[2]['value'] == '1001'){ // TZS
@@ -1801,6 +1802,291 @@ module.exports = function(app){
         } else if(post_xlf.header[2]['value'] == '1006'){ // LONGI
 
             res.send(JSON.stringify('No parser for LONGI as of the moment.'));
+        } else if(post_xlf.header[2]['value'] == '1007'){ // ACHL v2
+
+            if(!post_xlf.xlf['Pallet_ID Carton_ID LOT_ID']){
+                res.send(JSON.stringify('Invalid ACHL CoA File.'));
+            } else {
+
+                function checkName(){
+                    return new Promise(function(resolve, reject){
+                        mysqlCloud.connectAuth.getConnection(function(err, connection){
+                            if(err){ return res.send({err: 'error connecting to database in checking user details'})}
+                            connection.query({
+                                sql: 'SELECT * FROM deepmes_auth_login WHERE id=?',
+                                values: [req.userID]
+                            },  function(err, results, fields){
+                                let user_details = [];
+                                if(results){
+                                   try{
+                                        user_details.push({
+                                            id: results[0].id,
+                                            name: results[0].name,
+                                            username: results[0].username,
+                                            email: results[0].email,
+                                            department: results[0].department
+                                        });
+    
+                                        resolve(user_details);
+                                   } catch (error){
+                                        user_details.push({
+                                            id: 'undefined',
+                                            name: 'undefined',
+                                            username: results[0].username,
+                                            email: 'undefined',
+                                            department: 'undefined'
+                                        });
+    
+                                        resolve(user_details);
+                                   }
+                                }
+                            });
+                            connection.release();
+                        });
+    
+                    });
+                }
+    
+                function form_details(){ // promise function for header
+                    return new Promise(function(resolve, reject){
+    
+                        //  make sure no null here
+                        if(typeof post_xlf.header[0]['value'] !== 'undefined' && post_xlf.header[0]['value'] !== null || typeof post_xlf.header[1]['value'] !== 'undefined' && post_xlf.header[1]['value'] !== null || typeof post_xlf.header[2]['value'] !== 'undefined' && post_xlf.header[2]['value'] !== null) {
+    
+                            let form_details_obj = [];
+                            let dDate = post_xlf.header[1]['value'];
+    
+                            //  [0] - order no
+                            //  [1] - delivery date
+                            //  [2] - supplier id
+                            form_details_obj.push({
+                                supplier_id: post_xlf.header[2]['value'],
+                                delivery_date:  moment(new Date(dDate)).format('YYYY-MM-DD H:mm:ss'),
+                                order_no:   post_xlf.header[0]['value']
+                            });
+    
+                            //  check existing order no
+                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                connection.query({
+                                    sql: 'SELECT * FROM tbl_proposed_cofa WHERE order_no=?',
+                                    values:[form_details_obj[0].order_no]
+                                },  function(err, results, fields){
+    
+                                    //  if not undefined resolve the form details obj
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null){
+                                                                            
+                                        res.send(JSON.stringify('Invoice already exist'));
+    
+                                    } else {
+    
+                                        //  resolve
+                                        resolve(form_details_obj);
+                                        //console.log(form_details_obj);
+                                    }
+    
+                                });
+                            connection.release();
+                            });
+                        } else {    // if there's null in the form.. who knows,
+                            res.send(JSON.stringify('Cannot find the form details.<br> Please Fill up the form.'));
+                        }
+                    });
+                }
+
+                function coaACHL(){
+                    return new Promise(function(resolve, reject){
+
+                        let coaACHL_obj = [];
+
+                        for(let i=9; i < post_xlf.xlf['COA'].length; i++){ // row 10th
+                            if(post_xlf.xlf['COA'][i][1] != null && post_xlf.xlf['COA'][i][2] != null ){
+                                
+                                coaACHL_obj.push({
+                                    ingot_lot_id: post_xlf.xlf['COA'][i][0],
+                                    box_id: post_xlf.xlf['COA'][i][1],
+                                    location: post_xlf.xlf['COA'][i][2],
+                                    wafer_qty: post_xlf.xlf['COA'][i][3],
+                                    blocklength: post_xlf.xlf['COA'][i][4],
+                                    totalcrystal: post_xlf.xlf['COA'][i][5],
+                                    seedblock: post_xlf.xlf['COA'][i][6],
+                                    mclt_top: post_xlf.xlf['COA'][i][7],
+                                    mclt_bottom: post_xlf.xlf['COA'][i][8],
+                                    res_top: post_xlf.xlf['COA'][i][9],
+                                    res_bottom: post_xlf.xlf['COA'][i][10],
+                                    oi_top: post_xlf.xlf['COA'][i][11],
+                                    oi_bottom: post_xlf.xlf['COA'][i][12],
+                                    cs_top: post_xlf.xlf['COA'][i][13],
+                                    cs_bottom: post_xlf.xlf['COA'][i][14],
+                                    dia_ave: post_xlf.xlf['COA'][i][15],
+                                    dia_std: post_xlf.xlf['COA'][i][16],
+                                    dia_min: post_xlf.xlf['COA'][i][17],
+                                    dia_max: post_xlf.xlf['COA'][i][18],
+                                    flat_width_ave: post_xlf.xlf['COA'][i][19],
+                                    flat_width_std: post_xlf.xlf['COA'][i][20],
+                                    flat_width_min: post_xlf.xlf['COA'][i][21],
+                                    flat_width_max: post_xlf.xlf['COA'][i][22],
+                                    flat_lenth_ave: post_xlf.xlf['COA'][i][23],
+                                    flat_lenth_std: post_xlf.xlf['COA'][i][24],
+                                    flat_lenth_min: post_xlf.xlf['COA'][i][25],
+                                    flat_lenth_max: post_xlf.xlf['COA'][i][26],
+                                    corner_length_ave: post_xlf.xlf['COA'][i][27],
+                                    corner_length_std: post_xlf.xlf['COA'][i][28],
+                                    corner_length_min: post_xlf.xlf['COA'][i][29],
+                                    corner_length_max: post_xlf.xlf['COA'][i][30],
+                                    center_thickness_ave: post_xlf.xlf['COA'][i][31],
+                                    center_thickness_std: post_xlf.xlf['COA'][i][32],
+                                    center_thickness_min: post_xlf.xlf['COA'][i][33],
+                                    center_thickness_max: post_xlf.xlf['COA'][i][34],
+                                    ttv_ave: post_xlf.xlf['COA'][i][35],
+                                    ttv_std: post_xlf.xlf['COA'][i][36],
+                                    ttv_min: post_xlf.xlf['COA'][i][37],
+                                    ttv_max: post_xlf.xlf['COA'][i][38],
+                                    ra_ave: post_xlf.xlf['COA'][i][39],
+                                    ra_std: post_xlf.xlf['COA'][i][40],
+                                    ra_min: post_xlf.xlf['COA'][i][41],
+                                    ra_max: post_xlf.xlf['COA'][i][42],
+                                    rz_ave: post_xlf.xlf['COA'][i][43],
+                                    rz_std: post_xlf.xlf['COA'][i][44],
+                                    rz_min: post_xlf.xlf['COA'][i][45],
+                                    rz_max: post_xlf.xlf['COA'][i][46],
+                                    verticality_ave: post_xlf.xlf['COA'][i][47],
+                                    verticality_std: post_xlf.xlf['COA'][i][48],
+                                    verticality_min: post_xlf.xlf['COA'][i][49],
+                                    verticality_max: post_xlf.xlf['COA'][i][50],
+                                    copper_content: post_xlf.xlf['COA'][i][51],
+                                    iron_content: post_xlf.xlf['COA'][i][52],
+                                    acceptreject: post_xlf.xlf['COA'][i][53]
+                                });
+
+                            }
+
+                        }
+
+                        resolve(coaACHL_obj);
+
+                    });
+                }
+
+                function ingotACHL(){
+                    return new Promise(function(resolve, reject){
+
+                        let ingotACHL_obj = [];
+
+                        for(let i=0; i < post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'].length; i++){
+                            if(post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0] !== null){
+                                
+                                ingotACHL_obj.push({
+                                    pallet_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][0],
+                                    carton_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][1],
+                                    lot_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][2],
+                                    ausp_box_id: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][3],
+                                    qty: post_xlf.xlf['Pallet_ID Carton_ID LOT_ID'][i][4]
+                                });
+                            }
+
+                            
+                        }
+
+                        resolve(ingotACHL_obj);
+
+                    });
+                }
+
+                
+                checkName().then(function(user_details){
+                    return form_details().then(function(form_details_obj){
+                        
+                        function checkInvoiceIfExists(){
+                            return new Promise(function(resolve, reject){
+
+                                mysqlCloud.connectAuth.getConnection(function(err, connection){
+
+                                    connection.query({
+                                        sql: 'SELECT * FROM view_existing_invoice_v2 WHERE order_no=?',
+                                        values: [form_details_obj[0].order_no]
+                                    },  function(err, results, fields){
+
+                                        let checkInvoiceIfExists_obj = '';
+
+                                        if(results.length>0){
+                                            checkInvoiceIfExists_obj = results[0].order_no;
+                                            resolve(checkInvoiceIfExists_obj);
+                                            //console.log(checkInvoiceIfExists_obj);
+                                        } else {
+                                            resolve(checkInvoiceIfExists_obj);
+                                            //console.log(checkInvoiceIfExists_obj);
+                                        }
+                                        
+                                        
+                                    });
+
+                                    connection.release();
+
+                                });
+
+                            });
+                        }
+
+                        return checkInvoiceIfExists().then(function(checkInvoiceIfExists_obj){
+                            if(checkInvoiceIfExists_obj == ''){
+
+                                return coaACHL().then(function(coaACHL_obj){
+                                    return ingotACHL().then(function(ingotACHL_obj){
+                                        //console.log(coaACHL_obj);
+                                        
+                                        for(let i = 0; i<coaACHL_obj.length;i++){
+                                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                                //if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
+
+                                                if(err){ console.log(err)};
+
+                                                if(connection){
+                                                    connection.query({
+                                                        sql: 'INSERT INTO tbl_achl_coa_v2 SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, box_id=?, location=?, wafer_qty=?, blocklength=?, totalcrystal=?, seedblock=?, mclt_top=?, mclt_bottom=?, res_top=?, res_bottom=?, oi_top=?, oi_bottom=?, cs_top=?, cs_bottom=?, dia_ave=?, dia_std=?, dia_min=?, dia_max=?, flat_width_ave=?, flat_width_std=?, flat_width_min=?, flat_width_max=?, flat_length_ave=?, flat_length_std=?, flat_length_min=?, flat_length_max=?, corner_length_ave=?, corner_length_std=?, corner_length_min=?, corner_length_max=?, center_thickness_ave=?, center_thickness_std=?, center_thickness_min=?, center_thickness_max=?, ttv_ave=?, ttv_std=?, ttv_min=?, ttv_max=?, ra_ave=?, ra_std=?, ra_min=?, ra_max=?, rz_ave=?, rz_std=?, rz_min=?, rz_max=?, verticality_ave=?, verticality_std=?, verticality_min=?, verticality_max=?, copper_content=?, iron_content=?, acceptreject=?',
+                                                        values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaACHL_obj[i].ingot_lot_id, coaACHL_obj[i].box_id,  coaACHL_obj[i].location, coaACHL_obj[i].wafer_qty, coaACHL_obj[i].blocklength, coaACHL_obj[i].totalcrystal, coaACHL_obj[i].seedblock, coaACHL_obj[i].mclt_top, coaACHL_obj[i].mclt_bottom, coaACHL_obj[i].res_top, coaACHL_obj[i].res_bottom, coaACHL_obj[i].oi_top, coaACHL_obj[i].oi_bottom, coaACHL_obj[i].cs_top, coaACHL_obj[i].cs_bottom, coaACHL_obj[i].dia_ave, coaACHL_obj[i].dia_std, coaACHL_obj[i].dia_min, coaACHL_obj[i].dia_max,  coaACHL_obj[i].flat_width_ave, coaACHL_obj[i].flat_width_std, coaACHL_obj[i].flat_width_min, coaACHL_obj[i].flat_width_max, coaACHL_obj[i].flat_length_ave, coaACHL_obj[i].flat_length_std, coaACHL_obj[i].flat_length_min, coaACHL_obj[i].flat_length_max, coaACHL_obj[i].corner_length_ave, coaACHL_obj[i].corner_length_std, coaACHL_obj[i].corner_length_min, coaACHL_obj[i].corner_length_max, coaACHL_obj[i].center_thickness_ave, coaACHL_obj[i].center_thickness_std, coaACHL_obj[i].center_thickness_min, coaACHL_obj[i].center_thickness_max, coaACHL_obj[i].ttv_ave, coaACHL_obj[i].ttv_std, coaACHL_obj[i].ttv_min, coaACHL_obj[i].ttv_max, coaACHL_obj[i].ra_ave, coaACHL_obj[i].ra_std, coaACHL_obj[i].ra_min, coaACHL_obj[i].ra_max, coaACHL_obj[i].rz_ave, coaACHL_obj[i].rz_std, coaACHL_obj[i].rz_min, coaACHL_obj[i].rz_max, coaACHL_obj[i].verticality_ave, coaACHL_obj[i].verticality_std, coaACHL_obj[i].verticality_min, coaACHL_obj[i].verticality_max, coaACHL_obj[i].copper_content, coaACHL_obj[i].iron_content, coaACHL_obj[i].acceptreject]
+                                                    },  function(err, results, fields){
+                                                        //if(err){ return res.send(JSON.stringify({err: 'Error uploading ACHL v2 COA file...'})) };
+                                                        if(err){console.log(err)};
+                                                    });
+
+                                                    connection.release();
+                                                }
+
+                                            });
+                                        }
+                                        
+                                        
+                                        for(let i = 1; i<ingotACHL_obj.length;i++){
+                                            mysqlCloud.connectAuth.getConnection(function(err, connection){
+                                            // if(err){return res.send(JSON.stringify('Error getConnection to AWS server.'))}
+                                            if(err){ console.log(err)};
+
+                                                if(connection){
+                                                    connection.query({
+                                                        sql: 'INSERT INTO tbl_achl_ingot_v2 SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, pallet_id=?, carton_id=?, lot_id=?, box_id=?, qty=?', // changed ausp_box_id to box_id
+                                                        values: [form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, ingotACHL_obj[i].pallet_id, ingotACHL_obj[i].carton_id, ingotACHL_obj[i].lot_id, ingotACHL_obj[i].ausp_box_id, ingotACHL_obj[i].qty]
+                                                    },  function(err, results, fields){
+                                                        if(err){console.log(err)};
+                                                    });
+                                                    connection.release();
+                                                }
+                                            });
+                                        }
+
+                                        res.send(JSON.stringify({success: 'Uploading... Be patient. Large files need more time to build. Do not refresh.'}));
+
+                                    });
+                                });
+
+                            } else {
+                                res.send(JSON.stringify({err: checkInvoiceIfExists_obj + ' already exists.'}));
+                            }
+                        });
+                    });
+                });
+                
+            }
+
         }
         
         
@@ -1884,7 +2170,7 @@ module.exports = function(app){
             function uploadHistory(){
                 return new Promise(function(resolve, reject){
                         connection.query({
-                            sql: 'SELECT B.supplier_name, A.order_no, A.username, A.upload_time FROM (SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_achl_ingot GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ferrotec_ingot GROUP BY order_no) A JOIN (SELECT supplier_id, supplier_name FROM tbl_supplier_list) B ON A.supplier_id = B.supplier_id ORDER BY A.upload_time DESC'
+                            sql: 'SELECT B.supplier_name, A.order_no, A.username, A.upload_time FROM (SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ingot_lot_barcodes GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_achl_ingot_v2 GROUP BY order_no UNION SELECT id, supplier_id, upload_time, order_no, username FROM tbl_ferrotec_ingot GROUP BY order_no) A JOIN (SELECT supplier_id, supplier_name FROM tbl_supplier_list) B ON A.supplier_id = B.supplier_id ORDER BY A.upload_time DESC'
                         }, function(err, results, fields){
                             let uploaded_history = [];
                                 for(let i=0; i<results.length;i++){
