@@ -1523,7 +1523,7 @@ module.exports = function(app){
                         
                         for(let i=7; i < post_xlf.xlf['COA'].length; i++){
                             if(post_xlf.xlf['COA'][i][0] != '' && post_xlf.xlf['COA'][i][1] != null){
-
+                                /** 
                                 coaFERROTEC_obj.push({
                                     ingot_lot_id: post_xlf.xlf['COA'][i][0],
                                     sunpower_lot_id: post_xlf.xlf['COA'][i][1],
@@ -1580,6 +1580,63 @@ module.exports = function(app){
                                     Copper_content: post_xlf.xlf['COA'][i][52],
                                     Iron_content: post_xlf.xlf['COA'][i][53],
                                     AcceptReject: post_xlf.xlf['COA'][i][54]
+                                });
+                                */
+                                coaFERROTEC_obj.push({
+                                    ingot_lot_id: post_xlf.xlf['COA'][i][0],
+                                    box_no: post_xlf.xlf['COA'][i][1],
+                                    wafer_qty: post_xlf.xlf['COA'][i][2],
+                                    wafer_qty_difference: post_xlf.xlf['COA'][i][3],
+                                    block_length: post_xlf.xlf['COA'][i][4],
+                                    totalCystal_length: post_xlf.xlf['COA'][i][5],
+                                    seedBlock: post_xlf.xlf['COA'][i][6],
+                                    MCLT_top: post_xlf.xlf['COA'][i][7],
+                                    MCLT_tail: post_xlf.xlf['COA'][i][8],
+                                    Res_top: post_xlf.xlf['COA'][i][9],
+                                    Res_tail: post_xlf.xlf['COA'][i][10],
+                                    Oi_top: post_xlf.xlf['COA'][i][11],
+                                    Oi_tail: post_xlf.xlf['COA'][i][12],
+                                    Cs_top: post_xlf.xlf['COA'][i][13],
+                                    Cs_tail: post_xlf.xlf['COA'][i][14],
+                                    Dia_ave: post_xlf.xlf['COA'][i][15],
+                                    Dia_std: post_xlf.xlf['COA'][i][16],
+                                    Dia_min: post_xlf.xlf['COA'][i][17],
+                                    Dia_max: post_xlf.xlf['COA'][i][18],
+                                    Flat_ave: post_xlf.xlf['COA'][i][19],
+                                    Flat_std: post_xlf.xlf['COA'][i][20],
+                                    Flat_min: post_xlf.xlf['COA'][i][21],
+                                    Flat_max: post_xlf.xlf['COA'][i][22],
+                                    Flat_taper_ave: post_xlf.xlf['COA'][i][23],
+                                    Flat_taper_std: post_xlf.xlf['COA'][i][24],
+                                    Flat_taper_min: post_xlf.xlf['COA'][i][25],
+                                    Flat_taper_max: post_xlf.xlf['COA'][i][26],
+                                    Corner_ave: post_xlf.xlf['COA'][i][27],
+                                    Corner_std: post_xlf.xlf['COA'][i][28],
+                                    Corner_min: post_xlf.xlf['COA'][i][29],
+                                    Corner_max: post_xlf.xlf['COA'][i][30],
+                                    Thickness_ave: post_xlf.xlf['COA'][i][31],
+                                    Thickness_std: post_xlf.xlf['COA'][i][32],
+                                    Thickness_min: post_xlf.xlf['COA'][i][33],
+                                    Thickness_max: post_xlf.xlf['COA'][i][34],
+                                    TTV_ave: post_xlf.xlf['COA'][i][35],
+                                    TTV_std: post_xlf.xlf['COA'][i][36],
+                                    TTV_min: post_xlf.xlf['COA'][i][37],
+                                    TTV_max: post_xlf.xlf['COA'][i][38],
+                                    RA_ave: post_xlf.xlf['COA'][i][39],
+                                    RA_std: post_xlf.xlf['COA'][i][40],
+                                    RA_min: post_xlf.xlf['COA'][i][41],
+                                    RA_max: post_xlf.xlf['COA'][i][42],
+                                    RZ_ave: post_xlf.xlf['COA'][i][43],
+                                    RZ_std: post_xlf.xlf['COA'][i][44],
+                                    RZ_min: post_xlf.xlf['COA'][i][45],
+                                    RZ_max: post_xlf.xlf['COA'][i][46],
+                                    Vertical_ave: post_xlf.xlf['COA'][i][47],
+                                    Vertical_std: post_xlf.xlf['COA'][i][48],
+                                    Vertical_min: post_xlf.xlf['COA'][i][49],
+                                    Vertical_max: post_xlf.xlf['COA'][i][50],
+                                    Copper_content: post_xlf.xlf['COA'][i][51],
+                                    Iron_content: post_xlf.xlf['COA'][i][52],
+                                    AcceptReject: post_xlf.xlf['COA'][i][53]
                                 });
                             }
                         }
@@ -1661,8 +1718,8 @@ module.exports = function(app){
                                                 if(connection){
 
                                                     connection.query({
-                                                        sql: 'INSERT INTO tbl_ferrotec_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, sunpower_lot_id=?, box_id=?, wafer_qty=?, wafer_qty_difference=?, block_length=?, totalCrystal=?, seedBlock=?, MCLT_top=?, MCLT_tail=?, Res_top=?, Res_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Dia_ave=?, Dia_std=?, Dia_min=?, Dia_max=?, Flat_ave=?, Flat_std=?, Flat_min=?, Flat_max=?, Flat_taper_ave=?, Flat_taper_std=?, Flat_taper_min=?, Flat_taper_max=?, Corner_ave=?, Corner_std=?, Corner_min=?, Corner_max=?, Thickness_ave=?, Thickness_std=?, Thickness_min=?, Thickness_max=?, TTV_ave=?, TTV_std=?, TTV_min=?, TTV_max=?, RA_ave=?, RA_std=?, RA_min=?, RA_max=?, RZ_ave=?, RZ_std=?, RZ_min=?, RZ_max=?, Vertical_ave=?, Vertical_std=?, Vertical_min=?, Vertical_max=?, Copper_content=?, Iron_content=?, AcceptReject=?', // changed box_no TO box_id
-                                                        values:[form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaFERROTEC_obj[i].ingot_lot_id, coaFERROTEC_obj[i].sunpower_lot_id, coaFERROTEC_obj[i].box_no, coaFERROTEC_obj[i].wafer_qty, coaFERROTEC_obj[i].wafer_qty_difference, coaFERROTEC_obj[i].block_length, coaFERROTEC_obj[i].totalCrystal, coaFERROTEC_obj[i].seedBlock, coaFERROTEC_obj[i].MCLT_top, coaFERROTEC_obj[i].MCLT_tail, coaFERROTEC_obj[i].Res_top, coaFERROTEC_obj[i].Res_tail, coaFERROTEC_obj[i].Oi_top, coaFERROTEC_obj[i].Oi_tail, coaFERROTEC_obj[i].Cs_top, coaFERROTEC_obj[i].Cs_tail, coaFERROTEC_obj[i].Dia_ave, coaFERROTEC_obj[i].Dia_std, coaFERROTEC_obj[i].Dia_min, coaFERROTEC_obj[i].Dia_max, coaFERROTEC_obj[i].Flat_ave, coaFERROTEC_obj[i].Flat_std, coaFERROTEC_obj[i].Flat_min, coaFERROTEC_obj[i].Flat_max, coaFERROTEC_obj[i].Flat_taper_ave, coaFERROTEC_obj[i].Flat_taper_std, coaFERROTEC_obj[i].Flat_taper_min, coaFERROTEC_obj[i].Flat_taper_max, coaFERROTEC_obj[i].Corner_ave, coaFERROTEC_obj[i].Corner_std, coaFERROTEC_obj[i].Corner_min, coaFERROTEC_obj[i].Corner_max, coaFERROTEC_obj[i].Thickness_ave, coaFERROTEC_obj[i].Thickness_std, coaFERROTEC_obj[i].Thickness_min, coaFERROTEC_obj[i].Thickness_max, coaFERROTEC_obj[i].TTV_ave, coaFERROTEC_obj[i].TTV_std, coaFERROTEC_obj[i].TTV_min, coaFERROTEC_obj[i].TTV_max, coaFERROTEC_obj[i].RA_ave, coaFERROTEC_obj[i].RA_std, coaFERROTEC_obj[i].RA_min, coaFERROTEC_obj[i].RA_max, coaFERROTEC_obj[i].RZ_ave, coaFERROTEC_obj[i].RZ_std, coaFERROTEC_obj[i].RZ_min, coaFERROTEC_obj[i].RZ_max, coaFERROTEC_obj[i].Vertical_ave, coaFERROTEC_obj[i].Vertical_std, coaFERROTEC_obj[i].Vertical_min, coaFERROTEC_obj[i].Vertical_max, coaFERROTEC_obj[i].Copper_content, coaFERROTEC_obj[i].Iron_content, coaFERROTEC_obj[i].AcceptReject]
+                                                        sql: 'INSERT INTO tbl_ferrotec_coa SET supplier_id=?, delivery_date=?, order_no=?, upload_time=?, username=?, ingot_lot_id=?, box_id=?, wafer_qty=?, wafer_qty_difference=?, block_length=?, totalCrystal=?, seedBlock=?, MCLT_top=?, MCLT_tail=?, Res_top=?, Res_tail=?, Oi_top=?, Oi_tail=?, Cs_top=?, Cs_tail=?, Dia_ave=?, Dia_std=?, Dia_min=?, Dia_max=?, Flat_ave=?, Flat_std=?, Flat_min=?, Flat_max=?, Flat_taper_ave=?, Flat_taper_std=?, Flat_taper_min=?, Flat_taper_max=?, Corner_ave=?, Corner_std=?, Corner_min=?, Corner_max=?, Thickness_ave=?, Thickness_std=?, Thickness_min=?, Thickness_max=?, TTV_ave=?, TTV_std=?, TTV_min=?, TTV_max=?, RA_ave=?, RA_std=?, RA_min=?, RA_max=?, RZ_ave=?, RZ_std=?, RZ_min=?, RZ_max=?, Vertical_ave=?, Vertical_std=?, Vertical_min=?, Vertical_max=?, Copper_content=?, Iron_content=?, AcceptReject=?', // changed box_no TO box_id, removed spunpower_lot_id
+                                                        values:[form_details_obj[0].supplier_id, form_details_obj[0].delivery_date, form_details_obj[0].order_no, new Date(), user_details[0].username, coaFERROTEC_obj[i].ingot_lot_id, coaFERROTEC_obj[i].box_no, coaFERROTEC_obj[i].wafer_qty, coaFERROTEC_obj[i].wafer_qty_difference, coaFERROTEC_obj[i].block_length, coaFERROTEC_obj[i].totalCrystal, coaFERROTEC_obj[i].seedBlock, coaFERROTEC_obj[i].MCLT_top, coaFERROTEC_obj[i].MCLT_tail, coaFERROTEC_obj[i].Res_top, coaFERROTEC_obj[i].Res_tail, coaFERROTEC_obj[i].Oi_top, coaFERROTEC_obj[i].Oi_tail, coaFERROTEC_obj[i].Cs_top, coaFERROTEC_obj[i].Cs_tail, coaFERROTEC_obj[i].Dia_ave, coaFERROTEC_obj[i].Dia_std, coaFERROTEC_obj[i].Dia_min, coaFERROTEC_obj[i].Dia_max, coaFERROTEC_obj[i].Flat_ave, coaFERROTEC_obj[i].Flat_std, coaFERROTEC_obj[i].Flat_min, coaFERROTEC_obj[i].Flat_max, coaFERROTEC_obj[i].Flat_taper_ave, coaFERROTEC_obj[i].Flat_taper_std, coaFERROTEC_obj[i].Flat_taper_min, coaFERROTEC_obj[i].Flat_taper_max, coaFERROTEC_obj[i].Corner_ave, coaFERROTEC_obj[i].Corner_std, coaFERROTEC_obj[i].Corner_min, coaFERROTEC_obj[i].Corner_max, coaFERROTEC_obj[i].Thickness_ave, coaFERROTEC_obj[i].Thickness_std, coaFERROTEC_obj[i].Thickness_min, coaFERROTEC_obj[i].Thickness_max, coaFERROTEC_obj[i].TTV_ave, coaFERROTEC_obj[i].TTV_std, coaFERROTEC_obj[i].TTV_min, coaFERROTEC_obj[i].TTV_max, coaFERROTEC_obj[i].RA_ave, coaFERROTEC_obj[i].RA_std, coaFERROTEC_obj[i].RA_min, coaFERROTEC_obj[i].RA_max, coaFERROTEC_obj[i].RZ_ave, coaFERROTEC_obj[i].RZ_std, coaFERROTEC_obj[i].RZ_min, coaFERROTEC_obj[i].RZ_max, coaFERROTEC_obj[i].Vertical_ave, coaFERROTEC_obj[i].Vertical_std, coaFERROTEC_obj[i].Vertical_min, coaFERROTEC_obj[i].Vertical_max, coaFERROTEC_obj[i].Copper_content, coaFERROTEC_obj[i].Iron_content, coaFERROTEC_obj[i].AcceptReject]
                                                     },  function(err, results, fields){
                                                     });
 
