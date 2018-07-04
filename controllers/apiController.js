@@ -2344,7 +2344,7 @@ module.exports = function(app){
                     if(err){res.send({err: 'Error in connecting to database.'})};
 
                     connection.query({
-                        sql: 'SELECT * FROM tbl_coa_box ORDER BY id DESC'
+                        sql: 'SELECT * FROM tbl_coa_box ORDER BY id DESC LIMIT 50'
                     },  function(err, results, fields){
                         if(results){
                             let kittingUploadHistory_obj = [];
