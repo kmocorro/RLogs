@@ -8,8 +8,6 @@ let mysqlCloud = require('../dbConfig/dbCloud');
 let verifyToken = require('./verifyToken');
 
 module.exports = function(app){
-    
-    let numOfAttempts = 3;
 
     app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -44,24 +42,9 @@ module.exports = function(app){
                                     let passwordIsValid = bcrypt.compareSync(req.body.password, resultPass);
 
                                     if(!passwordIsValid){ 
-                                        let resolvedAuth = false;
+
+                                        return res.send({err: 'Invalid username or password.'});
                                         
-                                        numOfAttempts = numOfAttempts - 1;
-                                        
-                                        if(numOfAttempts > 0){
-
-                                            return res.send({err: 'Invalid username or password. ' + numOfAttempts + ' attempts remaining.'});
-                                            
-                                            resolve(resolvedAuth);
-
-                                            
-                                        } else if(numOfAttempts < 0){
-
-                                            return res.send({err: 'The account has been locked.'});
-
-                                        }
-
-
                                     } else {
 
                                         let token = jwt.sign({ id: results[0].id }, config.secret, { 
