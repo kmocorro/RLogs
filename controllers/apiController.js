@@ -195,7 +195,7 @@ module.exports = function(app){
                                 sql: 'SELECT * FROM tbl_coa_box WHERE box = ?',
                                 values: [post_kitting.box_no]
                             }, function(err, results, fields){
-                                if(typeof results[0] != 'undefined' && results[0] != null && results.length > 0){
+                                if(typeof results != 'undefined' && results != null && results.length > 0){
                                     res.send({err: 'Box ID already exists!'});
                                 } else {
 
