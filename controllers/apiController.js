@@ -192,7 +192,7 @@ module.exports = function(app){
                         return new Promise(function(resolve, reject){
                         
                             connection.query({
-                                sql: 'SELECT * FROM tbl_coa_box WHERE box = ?',
+                                sql: 'SELECT * FROM tbl_coa_box WHERE box_id = ?', //BUG box
                                 values: [post_kitting.box_no]
                             }, function(err, results, fields){
                                 if(typeof results != 'undefined' && results != null && results.length > 0){
